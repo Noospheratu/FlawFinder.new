@@ -2,21 +2,21 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf8">
-<title>Flawfinder Results</title>
+﻿<title>Результаты Flawfinder</title>
 <meta name="author" content="David A. Wheeler">
 <meta name="keywords" lang="en" content="flawfinder results, security scan">
 </head>
 <body>
-<h1>Flawfinder Results</h1>
-Here are the security scan results from
-<a href="http://www.dwheeler.com/flawfinder">Flawfinder version 1.31</a>,
+<h1>Результаты Flawfinder</h1>
+Результаты сканирования безопасности с помощью 
+<a href="http://www.dwheeler.com/flawfinder">Flawfinder версия 1.31</a>,
 (C) 2001-2014 <a href="http://www.dwheeler.com">David A. Wheeler</a>.
-Number of rules (primarily dangerous function names) in C/C++ ruleset: 169
+Количество правил (в первую очередь опасные названия функций) в наборе правил C/C++: 169
 <p>
-Examining test.c <br>
-Examining test2.c <br>
+﻿Изучение test.c <br>
+﻿Изучение test2.c <br>
 
-<h2>Final Results</h2>
+<h2>Конечные результаты</h2>
 <ul>
 <li>test.c:32: <b>  [5] </b> (buffer) <i> gets:
   Нет проверки на переполнение буфера (<a
@@ -32,9 +32,11 @@ Examining test2.c <br>
   вычисляется корректный максимальный
   размер для добавления) (<a
   href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
-  Consider strcat_s, strlcat, or automatically resizing strings. Risk is
-  high; the length parameter appears to be a constant, instead of computing
-  the number of characters left. </i>
+  Consider strcat_s, strlcat, or automatically resizing strings.
+  Высокий уровень риска; появляется
+  параметр длины, чтобы быть
+  постоянным,﻿вместо вычисления
+  количества оставшихся символов. </i>
 <pre>
   strncat(d,s,sizeof(d)); /* Misuse - this should be flagged as riskier. */
 </pre>
@@ -44,27 +46,31 @@ Examining test2.c <br>
   вычисляется корректный максимальный
   размер для добавления) (<a
   href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
-  Consider strcat_s, strlcat, or automatically resizing strings. Risk is
-  high; the length parameter appears to be a constant, instead of computing
-  the number of characters left. </i>
+  Consider strcat_s, strlcat, or automatically resizing strings.
+  Высокий уровень риска; появляется
+  параметр длины, чтобы быть
+  постоянным,﻿вместо вычисления
+  количества оставшихся символов. </i>
 <pre>
   _tcsncat(d,s,sizeof(d)); /* Misuse - flag as riskier */
 </pre>
 <li>test.c:60: <b>  [5] </b> (buffer) <i> MultiByteToWideChar:
   Требует указания максимальной длины в
   CHARACTERS, не в байтах (<a
-  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>).. Risk
-  is high, it appears that the size is given as bytes, but the function
-  requires size as characters. </i>
+  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
+  Высокий уровень риска, кажется, что
+  размер задан в виде байтов, нофункция
+  требует размер в символах </i>
 <pre>
   MultiByteToWideChar(CP_ACP,0,szName,-1,wszUserName,sizeof(wszUserName));
 </pre>
 <li>test.c:62: <b>  [5] </b> (buffer) <i> MultiByteToWideChar:
   Требует указания максимальной длины в
   CHARACTERS, не в байтах (<a
-  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>).. Risk
-  is high, it appears that the size is given as bytes, but the function
-  requires size as characters. </i>
+  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
+  Высокий уровень риска, кажется, что
+  размер задан в виде байтов, нофункция
+  требует размер в символах </i>
 <pre>
   MultiByteToWideChar(CP_ACP,0,szName,-1,wszUserName,sizeof wszUserName);
 </pre>
@@ -109,8 +115,9 @@ Examining test2.c <br>
 <pre>
  sprintf(s, gettext("hello %s"), bug);
 </pre>
-<li>test.c:22: <b>  [4] </b> (format) <i> sprintf:
-  Potential format string problem (<a
+<li>test.c:22: <b>  [4] </b> (форматирование) <i> sprintf:
+  Потенциальная проблема форматирования
+  строки (<a
   href="http://cwe.mitre.org/data/definitions/134.html">CWE-134</a>). Make
   format string constant. </i>
 <pre>
@@ -206,15 +213,17 @@ Examining test2.c <br>
   копировании в аргумент-назначение (<a
   href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
   Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily
-  misused). Risk is low because the source is a constant string. </i>
+  misused). Уровень риска низкий, поскольку
+  источник постоянной строкой. </i>
 <pre>
  strcpy(a, gettext("Hello there")); // Did this work?
 </pre>
 <li>test.c:19: <b>  [2] </b> (buffer) <i> sprintf:
   Нет проверки на переполнение буфера (<a
   href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>). Use
-  sprintf_s, snprintf, or vsnprintf. Risk is low because the source has a
-  constant maximum length. </i>
+  sprintf_s, snprintf, or vsnprintf. Уровень риска низкий,
+  поскольку источник имеет постоянную
+  максимальную длину. </i>
 <pre>
  sprintf(s, "hello");
 </pre>
@@ -278,15 +287,17 @@ Examining test2.c <br>
   копировании в аргумент-назначение (<a
   href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
   Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily
-  misused). Risk is low because the source is a constant character. </i>
+  misused). Уровень риска низкий, поскольку
+  источник символьная константа. </i>
 <pre>
  strcpy(a, "\n"); // Did this work?
 </pre>
 <li>test.c:18: <b>  [1] </b> (buffer) <i> sprintf:
   Нет проверки на переполнение буфера (<a
   href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>). Use
-  sprintf_s, snprintf, or vsnprintf. Risk is low because the source is a
-  constant character. </i>
+  sprintf_s, snprintf, or vsnprintf. Уровень риска низкий,
+  поскольку источник символьная
+  константа. </i>
 <pre>
  sprintf(s, "\n");
 </pre>
@@ -339,40 +350,42 @@ Examining test2.c <br>
 <li>test.c:64: <b>  [1] </b> (buffer) <i> MultiByteToWideChar:
   Требует указания максимальной длины в
   CHARACTERS, не в байтах (<a
-  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>).. Risk
-  is very low, the length appears to be in characters not bytes. </i>
+  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
+  Уровень риска низкий, длина по-видимому в
+  символах, а не в байтах. </i>
 <pre>
   MultiByteToWideChar(CP_ACP,0,szName,-1,wszUserName,sizeof(wszUserName)/sizeof(wszUserName[0]));
 </pre>
 <li>test.c:66: <b>  [1] </b> (buffer) <i> MultiByteToWideChar:
   Требует указания максимальной длины в
   CHARACTERS, не в байтах (<a
-  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>).. Risk
-  is very low, the length appears to be in characters not bytes. </i>
+  href="http://cwe.mitre.org/data/definitions/120.html">CWE-120</a>)..
+  Уровень риска низкий, длина по-видимому в
+  символах, а не в байтах. </i>
 <pre>
   MultiByteToWideChar(CP_ACP,0,szName,-1,wszUserName,sizeof wszUserName /sizeof(wszUserName[0]));
 </pre>
 </ul>
-<h2>Analysis Summary</h2>
+<h2>Итоги анализа</h2>
 <p>
-Hits = 36
+Просмотров =  36
 <br>
-Lines analyzed = 118
+Строк проанализировано = 118
 <br>
-Physical Source Lines of Code (SLOC) = 80
+Физическое количество строк кода (SLOC) = 80
 <br>
 Hits@level = [0]   0 [1]   9 [2]   7 [3]   3 [4]  10 [5]   7 <br>
 Hits@level+ = [0+]  36 [1+]  36 [2+]  27 [3+]  20 [4+]  17 [5+]   7 <br>
 Hits/KSLOC@level+ = [0+] 450 [1+] 450 [2+] 337.5 [3+] 250 [4+] 212.5 [5+] 87.5 <br>
-Suppressed hits =2 (use --neverignore to show them)
+﻿Подавленные хиты = 2 (используйте --neverignore, чтобы показать их)
 <br>
-Minimum risk level = 1
+﻿Минимальный уровень риска = 1
 <br>
-Not every hit is necessarily a security vulnerability.
+﻿Не каждый хит это обязательно уязвимость.
 <br>
-There may be other security vulnerabilities; review your code!
+﻿Там могут быть и другие уязвимости; Проверьте код!
 <br>
-See '<a href="http://www.dwheeler.com/secure-programs">Secure Programming for Linux and Unix HOWTO</a>'
-(<a href="http://www.dwheeler.com/secure-programs">http://www.dwheeler.com/secure-programs</a>) for more information.
+Смотрите '<a href="http://www.dwheeler.com/secure-programs">Secure Programming for Linux and Unix HOWTO</a>'
+(<a href="http://www.dwheeler.com/secure-programs">http://www.dwheeler.com/secure-programs</a>) для получения дополнительной информации.
 </body>
 </html>

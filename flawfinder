@@ -92,8 +92,38 @@ required_regex_compiled = None
 displayed_header = 0    # Have we displayed the header yet?
 num_ignored_hits = 0    # Number of ignored hits (used if never_ignore==0)
 
+import locale
+import gettext
+
+LANGUAGES = {
+  'ru': 'ru_RU',
+  'en': 'en_US'
+}
+
+def lang_init(_locale = None):
+    """
+    Initialize a translation framework (gettext).
+    Typical use::
+        _ = lang_init()
+ 
+    :return: A string translation function.
+    :rtype: (str) -> str
+    """
+    if _locale is None:
+      _locale, _encoding = locale.getdefaultlocale()  # Default system values
+ 
+    path = sys.argv[0]
+    path = os.path.join(os.path.dirname(path),'i18n')
+ 
+    lang = gettext.translation('flawfinder', path, [_locale, 'en_US'])
+    return lang.gettext
+
+global _
+_ = lang_init()
+
+
 def error(message):
-  sys.stderr.write("Error: %s\n"% message)
+  sys.stderr.write("%s\n"% _('Error: {message}').format(message=message))
 
 
 # Support routines: find a pattern.
@@ -116,7 +146,7 @@ blank_line     = re.compile( r'(?m)^\s+$' )
 # Send warning message.  This is written this way to work on
 # Python version 2.5 through Python 3.
 def print_warning(message):
-  sys.stderr.write("Warning: ")
+  sys.stderr.write(_("Warning: "))
   sys.stderr.write(message)
   sys.stderr.write("\n")
   sys.stderr.flush()
@@ -223,7 +253,8 @@ def load_patch_info(patch_file):
   index_statement = False # Set true if we see "Index:".
   try: hPatch = open(patch_file, 'r')
   except:
-    print "Error: failed to open", h(patch_file)
+    print _("Error: failed to open")
+    print h(patch_file)
     sys.exit(1)
 
   patched_filename = "" # Name of new file patched by current hunk.
@@ -237,7 +268,7 @@ def load_patch_info(patch_file):
   elif (is_gnu_diff(sLine)):
     fn_get_filename=gnu_diff_get_filename
   else:
-    print "Error: Unrecognized patch format"
+    print _("Error: Unrecognized patch format")
     sys.exit(1)
 
   while True: # Loop-and-half construct.  Read a line, end loop when no more
@@ -248,8 +279,7 @@ def load_patch_info(patch_file):
     if (filename_match):
       patched_filename = string.strip(filename_match.group('filename'))
       if (patched_file in patch):
-        error("filename occurs more than once in the patch: %s" %
-               patched_filename)
+        error(_("filename occurs more than once in the patch: {patched_filename}").format(patched_filename=patched_filename))
         sys.exit(1)
       else:
         patch[patched_filename] = {}
@@ -257,7 +287,7 @@ def load_patch_info(patch_file):
       hunk_match = diff_hunk.match(sLine)
       if (hunk_match):
         if (patched_filename == ""):
-            error("wrong type of patch file : we have a line number without having seen a filename")
+            error(_("wrong type of patch file: we have a line number without having seen a filename"))
             sys.exit(1)
         initial_number= hunk_match.group('linenumber')
         line_counter= 0
@@ -492,12 +522,11 @@ def extract_c_parameters(text, pos=0):
             # print " RESULTS: ", parameters
             return parameters
       elif c == ';':
-          internal_warn("Parsing failed to find end of parameter list; "
-                        "semicolon terminated it in %s" % text[pos:pos+200])
+          internal_warn(_("Parsing failed to find end of parameter list; "
+                        "semicolon terminated it in {text}").format(text=text[pos:pos+200]))
           return parameters
     i = i + 1
-  internal_warn("Parsing failed to find end of parameter list in %s" %
-                text[pos:pos+200])
+  internal_warn(_("Parsing failed to find end of parameter list in {text}").format(text=text[pos:pos+200]))
 
 
 # These patterns match gettext() and _() for internationalization.
@@ -546,10 +575,10 @@ def c_buffer(hit):
     source=hit.parameters[source_position]
     if c_singleton_string(source):
       hit.level = 1
-      hit.note = "Risk is low because the source is a constant character."
+      hit.note = _("Risk is low because the source is a constant character.")
     elif c_constant_string(strip_i18n(source)):
       hit.level = max( hit.level - 2, 1)
-      hit.note = "Risk is low because the source is a constant string."
+      hit.note = _("Risk is low because the source is a constant string.")
   add_warning(hit)
 
 
@@ -584,8 +613,8 @@ def c_strncat(hit):
     length_text=hit.parameters[3]
     if p_dangerous_strncat.search(length_text) or p_looks_like_constant.search(length_text):
       hit.level = 5
-      hit.note = ( "Risk is high; the length parameter appears to be a constant, " +
-                 "instead of computing the number of characters left.")
+      hit.note = ( _("Risk is high; the length parameter appears to be a constant, ") +
+                 _("instead of computing the number of characters left."))
       add_warning(hit)
       return
   c_buffer(hit)
@@ -599,16 +628,17 @@ def c_printf(hit):
       # Parameter is constant, so there's no risk of format string problems.
       if hit.name == "snprintf" or hit.name == "vsnprintf":
         hit.level = 1
-        hit.warning = \
-          "On some very old systems, snprintf is incorrectly implemented " \
-          "and permits buffer overflows; there are also incompatible " \
-          "standard definitions of it"
-        hit.suggestion = "Check it during installation, or use something else"
-        hit.category = "port"
+        hit.warning = (
+            _("On some very old systems, snprintf is incorrectly implemented ") +
+            _("and permits buffer overflows; there are also incompatible ") +
+            _("standard definitions of it")          
+          )
+        hit.suggestion = _("Check it during installation, or use something else")
+        hit.category = _("port")
       else:
         # We'll pass it on, just in case it's needed, but at level 0 risk.
         hit.level = 0
-        hit.note = "Constant format string, so not considered very risky (there's some residual risk, especially in a loop)."
+        hit.note = _("Constant format string, so not considered very risky (there's some residual risk, especially in a loop).")
   add_warning(hit)
 
 
@@ -620,29 +650,29 @@ def c_sprintf(hit):
   if hit.parameters is None:
     # Serious parameter problem, e.g., none, or a string constant that
     # never finishes.
-    hit.warning = "format string parameter problem"
-    hit.suggestion = "Check if required parameters present and quotes close."
+    hit.warning = _("format string parameter problem")
+    hit.suggestion = _("Check if required parameters present and quotes close.")
     hit.level = 4
-    hit.category = "format"
+    hit.category = _("format")
     hit.url = ""
   elif source_position <= len(hit.parameters)-1:
     source=hit.parameters[source_position]
     if c_singleton_string(source):
       hit.level = 1
-      hit.note = "Risk is low because the source is a constant character."
+      hit.note = _("Risk is low because the source is a constant character.")
     else:
       source = strip_i18n(source)
       if c_constant_string(source):
         if not p_dangerous_sprintf_format.search(source):
           hit.level = max( hit.level - 2, 1)
-          hit.note = "Risk is low because the source has a constant maximum length."
+          hit.note = _("Risk is low because the source has a constant maximum length.")
         # otherwise, warn of potential buffer overflow (the default)
       else:
         # Ho ho - a nonconstant format string - we have a different problem.
-        hit.warning = "Potential format string problem (CWE-134)"
-        hit.suggestion = "Make format string constant"
+        hit.warning = _("Potential format string problem (CWE-134)")
+        hit.suggestion = _("Make format string constant")
         hit.level = 4
-        hit.category = "format"
+        hit.category = _("format")
         hit.url = ""
   add_warning(hit)
 
@@ -661,16 +691,16 @@ def c_scanf(hit):
       elif p_low_risk_scanf_format.search(source):
         # This is often okay, but sometimes extremely serious.
         hit.level = 1
-        hit.warning = "It's unclear if the %s limit in the format string is small enough (CWE-120)"
-        hit.suggestion = "Check that the limit is sufficiently small, or use a different input function"
+        hit.warning = _("It's unclear if the %s limit in the format string is small enough (CWE-120)")
+        hit.suggestion = _("Check that the limit is sufficiently small, or use a different input function")
       else:
         # No risky scanf request.
         # We'll pass it on, just in case it's needed, but at level 0 risk.
         hit.level = 0
-        hit.note = "No risky scanf format detected."
+        hit.note = _("No risky scanf format detected.")
     else:
         # Format isn't a constant.
-        hit.note = "If the scanf format is influenceable by an attacker, it's exploitable."
+        hit.note = _("If the scanf format is influenceable by an attacker, it's exploitable.")
   add_warning(hit)
 
 
@@ -688,15 +718,15 @@ def c_multi_byte_to_wide_char(hit):
     num_chars_to_copy=hit.parameters[6]
     if p_dangerous_multi_byte.search(num_chars_to_copy):
       hit.level = 5
-      hit.note = ("Risk is high, it appears that the size is given as bytes, but the " +
-                 "function requires size as characters.")
+      hit.note = (_("Risk is high, it appears that the size is given as bytes, but the ") +
+                 _("function requires size as characters."))
     elif p_safe_multi_byte.search(num_chars_to_copy):
       # This isn't really risk-free, since it might not be the destination,
       # or the destination might be a character array (if it's a char pointer,
       # the pattern is actually quite dangerous, but programmers
       # are unlikely to make that error).
       hit.level = 1
-      hit.note = "Risk is very low, the length appears to be in characters not bytes."
+      hit.note = _("Risk is very low, the length appears to be in characters not bytes.")
   add_warning(hit)
 
 p_null_text = re.compile(r'^ *(NULL|0|0x0) *$')
@@ -733,385 +763,357 @@ def normal(hit):
 # See the definition for class "Hit".
 # The key can have multiple values separated with "|".
 
+shared_types = {
+  'buffer':   _("buffer"),
+  'format':   _("format"),
+  'race':     _("race"),
+  'misc':     _("misc"),
+  'access':   _("access"),
+  'shell':    _("shell"),
+  'integer':  _("integer"),
+  'random':   _("random"),
+  'crypto':   _("crypto"),
+  'obsolete': _("obsolete"),
+  'free':     _("free"),
+  'input':    _("input"),
+  'tmpfile':  _("tmpfile")
+}
+
 c_ruleset = {
   "strcpy" :
      (c_buffer, 4,
-      "Does not check for buffer overflows when copying to destination (CWE-120)",
-      "Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily misused)",
-      "buffer", "", {}),
+      _("Does not check for buffer overflows when copying to destination (CWE-120)"),
+      _("Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily misused)"),
+      shared_types['buffer'], "", {}),
   "lstrcpy|wcscpy|_tcscpy|_mbscpy" :
      (c_buffer, 4,
-      "Does not check for buffer overflows when copying to destination (CWE-120)",
-      "Consider using a function version that stops copying at the end of the buffer",
-      "buffer", "", {}),
+      _("Does not check for buffer overflows when copying to destination (CWE-120)"),
+      _("Consider using a function version that stops copying at the end of the buffer"),
+      shared_types['buffer'], "", {}),
   "memcpy|CopyMemory|bcopy" :
      (normal, 2, # I've found this to have a lower risk in practice.
-      "Does not check for buffer overflows when copying to destination (CWE-120)",
-      "Make sure destination can always hold the source data",
-      "buffer", "", {}),
+      _("Does not check for buffer overflows when copying to destination (CWE-120)"),
+      _("Make sure destination can always hold the source data"),
+      shared_types['buffer'], "", {}),
   "strcat" :
      (c_buffer, 4,
-      "Does not check for buffer overflows when concatenating to destination (CWE-120)",
-      "Consider using strcat_s, strncat, or strlcat (warning, strncat is easily misused)",
-      "buffer", "", {}),
+      _("Does not check for buffer overflows when concatenating to destination (CWE-120)"),
+      _("Consider using strcat_s, strncat, or strlcat (warning, strncat is easily misused)"),
+      shared_types['buffer'], "", {}),
   "lstrcat|wcscat|_tcscat|_mbscat" :
      (c_buffer, 4,
-      "Does not check for buffer overflows when concatenating to destination (CWE-120)",
+      _("Does not check for buffer overflows when concatenating to destination (CWE-120)"),
       "",
-      "buffer", "", {}),
+      shared_types['buffer'], "", {}),
   "strncpy" :
      (c_buffer,
       1, # Low risk level, because this is often used correctly when FIXING security
       # problems, and raising it to a higher risk level would cause many false positives.
-      "Easily used incorrectly; doesn't always \\0-terminate or " +
-         "check for invalid pointers (CWE-120)",
+      _("Easily used incorrectly; doesn't always \\0-terminate or check for invalid pointers (CWE-120)"),
       "",
-      "buffer", "", {}),
+      shared_types['buffer'], "", {}),
   "lstrcpyn|wcsncpy|_tcsncpy|_mbsnbcpy" :
      (c_buffer,
       1, # Low risk level, because this is often used correctly when FIXING security
       # problems, and raising it to a higher risk levle would cause many false positives.
-      "Easily used incorrectly; doesn't always \\0-terminate or " +
-         "check for invalid pointers (CWE-120)",
+      _("Easily used incorrectly; doesn't always \\0-terminate or check for invalid pointers (CWE-120)"),
       "",
-      "buffer", "", {}),
+      shared_types['buffer'], "", {}),
   "strncat" :
      (c_strncat,
       1, # Low risk level, because this is often used correctly when
          # FIXING security problems, and raising it to a
          # higher risk level would cause many false positives.
-      "Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) (CWE-120)",
-      "Consider strcat_s, strlcat, or automatically resizing strings",
-      "buffer", "", {}),
+      _("Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) (CWE-120)"),
+      _("Consider strcat_s, strlcat, or automatically resizing strings"),
+      shared_types['buffer'], "", {}),
   "lstrcatn|wcsncat|_tcsncat|_mbsnbcat" :
      (c_strncat,
       1, # Low risk level, because this is often used correctly when FIXING security
       # problems, and raising it to a higher risk level would cause many false positives.
-      "Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) (CWE-120)",
-      "Consider strcat_s, strlcat, or automatically resizing strings",
-      "buffer", "", {}),
+      _("Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) (CWE-120)"),
+      _("Consider strcat_s, strlcat, or automatically resizing strings"),
+      shared_types['buffer'], "", {}),
   "strccpy|strcadd":
      (normal, 1,
-      "Subject to buffer overflow if buffer is not as big as claimed (CWE-120)",
-      "Ensure that destination buffer is sufficiently large",
-      "buffer", "", {}),
+      _("Subject to buffer overflow if buffer is not as big as claimed (CWE-120)"),
+      _("Ensure that destination buffer is sufficiently large"),
+      shared_types['buffer'], "", {}),
   "char|TCHAR|wchar_t":  # This isn't really a function call, but it works.
      (c_static_array, 2,
-      "Statically-sized arrays can be improperly restricted, " +
-      "leading to potential overflows or other issues (CWE-119:CWE-120)",
-      "Perform bounds checking, use functions that limit length, " +
-        "or ensure that the size is larger than the maximum possible length",
-      "buffer", "", {'extract_lookahead' : 1}),
+      _("Statically-sized arrays can be improperly restricted, leading to potential overflows or other issues (CWE-119:CWE-120)"),
+      _("Perform bounds checking, use functions that limit length, or ensure that the size is larger than the maximum possible length"),
+      shared_types['buffer'], "", {'extract_lookahead' : 1}),
 
   "gets|_getts":
-     (normal, 5, "Does not check for buffer overflows (CWE-120, CWE-20)",
-      "Use fgets() instead", "buffer", "", {'input' : 1}),
+     (normal, 5, 
+      _("Does not check for buffer overflows (CWE-120, CWE-20)"),
+      _("Use fgets() instead"), 
+      shared_types['buffer'], "", {'input' : 1}),
 
   # The "sprintf" hook will raise "format" issues instead if appropriate:
   "sprintf|vsprintf|swprintf|vswprintf|_stprintf|_vstprintf":
      (c_sprintf, 4,
-      "Does not check for buffer overflows (CWE-120)",
-      "Use sprintf_s, snprintf, or vsnprintf",
-      "buffer", "", {}),
+      _("Does not check for buffer overflows (CWE-120)"),
+      _("Use sprintf_s, snprintf, or vsnprintf"),
+      shared_types['buffer'], "", {}),
 
   "printf|vprintf|vwprintf|vfwprintf|_vtprintf|wprintf":
      (c_printf, 4,
-      "If format strings can be influenced by an attacker, they can be exploited (CWE-134)",
-      "Use a constant for the format specification",
-      "format", "", {}),
+      _("If format strings can be influenced by an attacker, they can be exploited (CWE-134)"),
+      _("Use a constant for the format specification"),
+      shared_types['format'], "", {}),
 
   "fprintf|vfprintf|_ftprintf|_vftprintf|fwprintf|fvwprintf":
      (c_printf, 4,
-      "If format strings can be influenced by an attacker, they can be exploited (CWE-134)",
-      "Use a constant for the format specification",
-      "format", "", { 'format_position' : 2}),
+      _("If format strings can be influenced by an attacker, they can be exploited (CWE-134)"),
+      _("Use a constant for the format specification"),
+      shared_types['format'], "", { 'format_position' : 2}),
 
   # The "syslog" hook will raise "format" issues.
   "syslog":
      (c_printf, 4,
-      "If syslog's format strings can be influenced by an attacker, " +
-      "they can be exploited (CWE-134)",
-      "Use a constant format string for syslog",
-      "format", "", { 'format_position' : 2} ),
+      _("If syslog's format strings can be influenced by an attacker, they can be exploited (CWE-134)"),
+      _("Use a constant format string for syslog"),
+      shared_types['format'], "", { 'format_position' : 2} ),
 
   "snprintf|vsnprintf|_snprintf|_sntprintf|_vsntprintf":
      (c_printf, 4,
-      "If format strings can be influenced by an attacker, they can be " +
-      "exploited, and note that sprintf variations do not always \\0-terminate (CWE-134)",
-      "Use a constant for the format specification",
-      "format", "", { 'format_position' : 3}),
+      _("If format strings can be influenced by an attacker, they can be exploited, and note that sprintf variations do not always \\0-terminate (CWE-134)"),
+      _("Use a constant for the format specification"),
+      shared_types['format'], "", { 'format_position' : 3}),
 
   "scanf|vscanf|wscanf|_tscanf|vwscanf":
      (c_scanf, 4,
-      "The scanf() family's %s operation, without a limit specification, " +
-        "permits buffer overflows (CWE-120, CWE-20)",
-      "Specify a limit to %s, or use a different input function",
-      "buffer", "", {'input' : 1}),
+      _("The scanf() family's %s operation, without a limit specification, permits buffer overflows (CWE-120, CWE-20)"),
+      _("Specify a limit to %s, or use a different input function"),
+      shared_types['buffer'], "", {'input' : 1}),
 
   "fscanf|sscanf|vsscanf|vfscanf|_ftscanf|fwscanf|vfwscanf|vswscanf":
      (c_scanf, 4,
-      "The scanf() family's %s operation, without a limit specification, "
-      "permits buffer overflows (CWE-120, CWE-20)",
-      "Specify a limit to %s, or use a different input function",
-      "buffer", "", {'input' : 1, 'format_position' : 2}),
+      _("The scanf() family's %s operation, without a limit specification, permits buffer overflows (CWE-120, CWE-20)"),
+      _("Specify a limit to %s, or use a different input function"),
+      shared_types['buffer'], "", {'input' : 1, 'format_position' : 2}),
 
   "strlen|wcslen|_tcslen|_mbslen" :
      (normal,
       1, # Often this isn't really a risk, and even when, it usually at worst causes
       # program crash (and nothing worse).
-      "Does not handle strings that are not \\0-terminated; " +
-      "if given one it may perform an over-read (it could cause a crash " +
-         "if unprotected) (CWE-126)",
+      _("Does not handle strings that are not \\0-terminated; if given one it may perform an over-read (it could cause a crash if unprotected) (CWE-126)"),
       "",
-      "buffer", "", {}),
+      shared_types['buffer'], "", {}),
 
   "MultiByteToWideChar" : # Windows
      (c_multi_byte_to_wide_char,
       2, # Only the default - this will be changed in many cases.
-      "Requires maximum length in CHARACTERS, not bytes (CWE-120)",
+      _("Requires maximum length in CHARACTERS, not bytes (CWE-120)"),
       "",
-      "buffer", "", {}),
+      shared_types['buffer'], "", {}),
 
   "streadd|strecpy":
      (normal, 4,
-      "This function does not protect against buffer overflows (CWE-120)",
-      "Ensure the destination has 4 times the size of the source, to leave room for expansion",
-      "buffer", "dangers-c", {}),
+      _("This function does not protect against buffer overflows (CWE-120)"),
+      _("Ensure the destination has 4 times the size of the source, to leave room for expansion"),
+      shared_types['buffer'], "dangers-c", {}),
 
   "strtrns":
      (normal, 3,
-      "This function does not protect against buffer overflows (CWE-120)",
-      "Ensure that destination is at least as long as the source",
-      "buffer", "dangers-c", {}),
+      _("This function does not protect against buffer overflows (CWE-120)"),
+      _("Ensure that destination is at least as long as the source"),
+      shared_types['buffer'], "dangers-c", {}),
 
   "realpath":
      (normal, 3,
-      "This function does not protect against buffer overflows, " +
-        "and some implementations can overflow internally (CWE-120/CWE-785)",
-      "Ensure that the destination buffer is at least of size MAXPATHLEN, and" +
-        "to protect against implementation problems, the input argument should also " +
-        "be checked to ensure it is no larger than MAXPATHLEN",
-      "buffer", "dangers-c", {}),
+      _("This function does not protect against buffer overflows, and some implementations can overflow internally (CWE-120/CWE-785)"),
+      _("Ensure that the destination buffer is at least of size MAXPATHLEN, and to protect against implementation problems, the input argument should also be checked to ensure it is no larger than MAXPATHLEN"),
+      shared_types['buffer'], "dangers-c", {}),
 
   "getopt|getopt_long":
      (normal, 3,
-     "Some older implementations do not protect against internal buffer overflows (CWE-120, CWE-20)",
-      "Check implementation on installation, or limit the size of all string inputs",
-      "buffer", "dangers-c", {'input' : 1}),
+     _("Some older implementations do not protect against internal buffer overflows (CWE-120, CWE-20)"),
+      _("Check implementation on installation, or limit the size of all string inputs"),
+      shared_types['buffer'], "dangers-c", {'input' : 1}),
 
   "getpass":
      (normal, 3,
-     "Some implementations may overflow buffers (CWE-120, CWE-20)",
+     _("Some implementations may overflow buffers (CWE-120, CWE-20)"),
       "",
-      "buffer", "dangers-c", {'input' : 1}),
+      shared_types['buffer'], "dangers-c", {'input' : 1}),
 
   "getwd":
      (normal, 3,
-     "This does not protect against buffer overflows "
-     "by itself, so use with caution (CWE-120, CWE-20)",
-      "Use getcwd instead",
-      "buffer", "dangers-c", {'input' : 1}),
+     _("This does not protect against buffer overflows by itself, so use with caution (CWE-120, CWE-20)"),
+      _("Use getcwd instead"),
+      shared_types['buffer'], "dangers-c", {'input' : 1}),
 
   # fread not included here; in practice I think it's rare to mistake it.
   "getchar|fgetc|getc|read|_gettc":
      (normal, 1,
-     "Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20)",
+     _("Check buffer boundaries if used in a loop including recursive loops (CWE-120, CWE-20)"),
       "",
-      "buffer", "dangers-c", {'input' : 1}),
+      shared_types['buffer'], "dangers-c", {'input' : 1}),
 
   "access":        # ???: TODO: analyze TOCTOU more carefully.
      (normal, 4,
-      "This usually indicates a security flaw.  If an " +
-      "attacker can change anything along the path between the " +
-      "call to access() and the file's actual use (e.g., by moving " +
-      "files), the attacker can exploit the race condition (CWE-362/CWE-367)",
-      "Set up the correct permissions (e.g., using setuid()) and " +
-      "try to open the file directly",
-      "race",
+      _("This usually indicates a security flaw.  If an attacker can change anything along the path between the call to access() and the file's actual use (e.g., by moving files), the attacker can exploit the race condition (CWE-362/CWE-367)"),
+      _("Set up the correct permissions (e.g., using setuid()) and try to open the file directly"),
+      shared_types['race'],
       "avoid-race#atomic-filesystem", {}),
   "chown":
      (normal, 5,
-      "This accepts filename arguments; if an attacker " +
-      "can move those files, a race condition results. (CWE-362)",
-      "Use fchown( ) instead",
-      "race", "", {}),
+      _("This accepts filename arguments; if an attacker can move those files, a race condition results. (CWE-362)"),
+      _("Use fchown( ) instead"),
+      shared_types['race'], "", {}),
   "chgrp":
      (normal, 5,
-      "This accepts filename arguments; if an attacker " +
-      "can move those files, a race condition results. (CWE-362)",
-      "Use fchgrp( ) instead",
-      "race", "", {}),
+      _("This accepts filename arguments; if an attacker can move those files, a race condition results. (CWE-362)"),
+      _("Use fchgrp( ) instead"),
+      shared_types['race'], "", {}),
   "chmod":
      (normal, 5,
-      "This accepts filename arguments; if an attacker " +
-      "can move those files, a race condition results. (CWE-362)",
-      "Use fchmod( ) instead",
-      "race", "", {}),
+      _("This accepts filename arguments; if an attacker can move those files, a race condition results. (CWE-362)"),
+      _("Use fchmod( ) instead"),
+      shared_types['race'], "", {}),
   "vfork":
      (normal, 2,
-      "On some old systems, vfork() permits race conditions, and it's " +
-      "very difficult to use correctly (CWE-362)",
-      "Use fork() instead",
-      "race", "", {}),
+      _("On some old systems, vfork() permits race conditions, and it's very difficult to use correctly (CWE-362)"),
+      _("Use fork() instead"),
+      shared_types['race'], "", {}),
   "readlink":
      (normal, 5,
-      "This accepts filename arguments; if an attacker " +
-      "can move those files or change the link content, " +
-      "a race condition results.  " +
-      "Also, it does not terminate with ASCII NUL. (CWE-362, CWE-20)",
+      _("This accepts filename arguments; if an attacker can move those files or change the link content, a race condition results. Also, it does not terminate with ASCII NUL. (CWE-362, CWE-20)"),
       # This is often just a bad idea, and it's hard to suggest a
       # simple alternative:
-      "Reconsider approach",
-      "race", "", {'input' : 1}),
+      _("Reconsider approach"),
+      shared_types['race'], "", {'input' : 1}),
 
   "tmpfile":
      (normal, 2,
-      "Function tmpfile() has a security flaw on some systems (e.g., older System V systems) (CWE-377)",
+      _("Function tmpfile() has a security flaw on some systems (e.g., older System V systems) (CWE-377)"),
       "",
-      "tmpfile", "", {}),
+      shared_types['tmpfile'], "", {}),
   "tmpnam|tempnam":
      (normal, 3,
-      "Temporary file race condition (CWE-377)",
+      _("Temporary file race condition (CWE-377)"),
       "",
-      "tmpfile", "avoid-race", {}),
+      shared_types['tmpfile'], "avoid-race", {}),
 
   # TODO: Detect GNOME approach to mktemp and ignore it.
   "mktemp":
      (normal, 4,
-      "Temporary file race condition (CWE-377)",
+      _("Temporary file race condition (CWE-377)"),
       "",
-      "tmpfile", "avoid-race", {}),
+      shared_types['tmpfile'], "avoid-race", {}),
 
   "mkstemp":
      (normal, 2,
-     "Potential for temporary file vulnerability in some circumstances.  Some older Unix-like systems create temp files with permission to write by all by default, so be sure to set the umask to override this. Also, some older Unix systems might fail to use O_EXCL when opening the file, so make sure that O_EXCL is used by the library (CWE-377)",
+     _("Potential for temporary file vulnerability in some circumstances.  Some older Unix-like systems create temp files with permission to write by all by default, so be sure to set the umask to override this. Also, some older Unix systems might fail to use O_EXCL when opening the file, so make sure that O_EXCL is used by the library (CWE-377)"),
       "",
-      "tmpfile", "avoid-race", {}),
+      shared_types['tmpfile'], "avoid-race", {}),
 
   "fopen|open":
      (normal, 2,
-     "Check when opening files - can an attacker redirect it (via symlinks), force the opening of special file type (e.g., device files), move things around to create a race condition, control its ancestors, or change its contents? (CWE-362)",
+     _("Check when opening files - can an attacker redirect it (via symlinks), force the opening of special file type (e.g., device files), move things around to create a race condition, control its ancestors, or change its contents? (CWE-362)"),
       "",
-      "misc", "", {}),
+      shared_types['misc'], "", {}),
 
   "umask":
      (normal, 1,
-      "Ensure that umask is given most restrictive possible setting (e.g., 066 or 077) (CWE-732)",
+      _("Ensure that umask is given most restrictive possible setting (e.g., 066 or 077) (CWE-732)"),
       "",
-      "access", "", {}),
+      shared_types['access'], "", {}),
 
   # Windows.  TODO: Detect correct usage approaches and ignore it.
   "GetTempFileName":
      (normal, 3,
-      "Temporary file race condition in certain cases " +
-        "(e.g., if run as SYSTEM in many versions of Windows) (CWE-377)",
+      _("Temporary file race condition in certain cases (e.g., if run as SYSTEM in many versions of Windows) (CWE-377)"),
       "",
-      "tmpfile", "avoid-race", {}),
+      shared_types['tmpfile'], "avoid-race", {}),
 
   # TODO: Need to detect varying levels of danger.
   "execl|execlp|execle|execv|execvp|system|popen|WinExec|ShellExecute":
      (normal, 4,
-      "This causes a new program to execute and is difficult to use safely (CWE-78)",
-      "try using a library call that implements the same functionality " +
-      "if available",
-      "shell", "", {}),
+      _("This causes a new program to execute and is difficult to use safely (CWE-78)"),
+      _("try using a library call that implements the same functionality if available"),
+      shared_types['shell'], "", {}),
 
   # TODO: Need to detect varying levels of danger.
   "execl|execlp|execle|execv|execvp|system|popen|WinExec|ShellExecute":
      (normal, 4,
-      "This causes a new program to execute and is difficult to use safely (CWE-78)",
-      "try using a library call that implements the same functionality " +
-      "if available",
-      "shell", "", {}),
+      _("This causes a new program to execute and is difficult to use safely (CWE-78)"),
+      _("try using a library call that implements the same functionality if available"),
+      shared_types['shell'], "", {}),
 
   # TODO: Be more specific.  The biggest problem involves "first" param NULL,
   # second param with embedded space. Windows.
   "CreateProcessAsUser|CreateProcessWithLogon":
      (normal, 3,
-      "This causes a new process to execute and is difficult to use safely (CWE-78)",
-      "Especially watch out for embedded spaces",
-      "shell", "", {}),
+      _("This causes a new process to execute and is difficult to use safely (CWE-78)"),
+      _("Especially watch out for embedded spaces"),
+      shared_types['shell'], "", {}),
 
   # TODO: Be more specific.  The biggest problem involves "first" param NULL,
   # second param with embedded space. Windows.
   "CreateProcess":
      (c_hit_if_null, 3,
-      "This causes a new process to execute and is difficult to use safely (CWE-78)",
-      "Specify the application path in the first argument, NOT as part of the second, " +
-        "or embedded spaces could allow an attacker to force a different program to run",
-      "shell", "", {'check_for_null' : 1}),
+      _("This causes a new process to execute and is difficult to use safely (CWE-78)"),
+      _("Specify the application path in the first argument, NOT as part of the second, or embedded spaces could allow an attacker to force a different program to run"),
+      shared_types['shell'], "", {'check_for_null' : 1}),
 
   "atoi|atol|_wtoi|_wtoi64":
      (normal, 2,
-      "Unless checked, the resulting number can exceed the expected range " +
-      "(CWE-190)",
-      "If source untrusted, check both minimum and maximum, even if the" +
-      " input had no minus sign (large numbers can roll over into negative" +
-      " number; consider saving to an unsigned value if that is intended)",
-      "integer", "dangers-c", {}),
+      _("Unless checked, the resulting number can exceed the expected range (CWE-190)"),
+      _("If source untrusted, check both minimum and maximum, even if the input had no minus sign (large numbers can roll over into negative number; consider saving to an unsigned value if that is intended)"),
+      shared_types['integer'], "dangers-c", {}),
 
   # Random values.  Don't trigger on "initstate", it's too common a term.
   "drand48|erand48|jrand48|lcong48|lrand48|mrand48|nrand48|random|seed48|setstate|srand|strfry|srandom":
      (normal, 3,
-      "This function is not sufficiently random for security-related functions such as key and nonce creation (CWE-327)",
-      "use a more secure technique for acquiring random values",
-      "random", "", {}),
+      _("This function is not sufficiently random for security-related functions such as key and nonce creation (CWE-327)"),
+      _("use a more secure technique for acquiring random values"),
+      shared_types['random'], "", {}),
 
   "crypt":
      (normal, 4,
-      "Function crypt is a poor one-way hashing algorithm; since it only accepts passwords of 8 " +
-        "characters or less, and only a two-byte salt, it is excessively vulnerable to " +
-        "dictionary attacks given today's faster computing equipment (CWE-327)",
-      "Use a different algorithm, such as SHA-1, with a larger non-repeating salt",
-      "crypto", "", {}),
+      _("Function crypt is a poor one-way hashing algorithm; since it only accepts passwords of 8 characters or less, and only a two-byte salt, it is excessively vulnerable to dictionary attacks given today's faster computing equipment (CWE-327)"),
+      _("Use a different algorithm, such as SHA-1, with a larger non-repeating salt"),
+      shared_types['crypto'], "", {}),
 
   # OpenSSL EVP calls to use DES.
   "EVP_des_ecb|EVP_des_cbc|EVP_des_cfb|EVP_des_ofb|EVP_desx_cbc":
      (normal, 4,
-      "DES only supports a 56-bit keysize, which is too small given today's computers (CWE-327)",
-      "Use a different patent-free encryption algorithm with a larger keysize, " +
-         "such as 3DES or AES",
-      "crypto", "", {}),
+      _("DES only supports a 56-bit keysize, which is too small given today's computers (CWE-327)"),
+      _("Use a different patent-free encryption algorithm with a larger keysize, such as 3DES or AES"),
+      shared_types['crypto'], "", {}),
 
   # Other OpenSSL EVP calls to use small keys.
   "EVP_rc4_40|EVP_rc2_40_cbc|EVP_rc2_64_cbc":
      (normal, 4,
-      "These keysizes are too small given today's computers (CWE-327)",
-      "Use a different patent-free encryption algorithm with a larger keysize, " +
-        "such as 3DES or AES",
-      "crypto", "", {}),
+      _("These keysizes are too small given today's computers (CWE-327)"),
+      _("Use a different patent-free encryption algorithm with a larger keysize, such as 3DES or AES"),
+      shared_types['crypto'], "", {}),
 
   "chroot":
      (normal, 3,
-      "chroot can be very helpful, but is hard to use correctly (CWE-250, CWE-22)",
-      "Make sure the program immediately chdir(\"/\")," +
-      " closes file descriptors," +
-      " and drops root privileges, and that all necessary files" +
-      " (and no more!) are in the new root",
-      "misc", "", {}),
+      _("chroot can be very helpful, but is hard to use correctly (CWE-250, CWE-22)"),
+      _("Make sure the program immediately chdir(\"/\"), closes file descriptors, and drops root privileges, and that all necessary files (and no more!) are in the new root"),
+      shared_types['misc'], "", {}),
 
   "getenv|curl_getenv":
-     (normal, 3, "Environment variables are untrustable input if they can be" +
-                 " set by an attacker.  They can have any content and" +
-                 " length, and the same variable can be set more than once (CWE-807, CWE-20)",
-      "Check environment variables carefully before using them",
-      "buffer", "", {'input' : 1}),
+     (normal, 3, 
+      _("Environment variables are untrustable input if they can be set by an attacker.  They can have any content and length, and the same variable can be set more than once (CWE-807, CWE-20)"),
+      _("Check environment variables carefully before using them"),
+      shared_types['buffer'], "", {'input' : 1}),
 
   "g_get_home_dir":
-     (normal, 3, "This function is synonymous with 'getenv(\"HOME\")';" +
-                 "it returns untrustable input if the environment can be" +
-                 "set by an attacker.  It can have any content and length, " +
-                 "and the same variable can be set more than once (CWE-807, CWE-20)",
-      "Check environment variables carefully before using them",
-      "buffer", "", {'input' : 1}),
+     (normal, 3, _("This function is synonymous with 'getenv(\"HOME\")'; it returns untrustable input if the environment can be set by an attacker.  It can have any content and length, and the same variable can be set more than once (CWE-807, CWE-20)"),
+      _("Check environment variables carefully before using them"),
+      shared_types['buffer'], "", {'input' : 1}),
 
   "g_get_tmp_dir":
-     (normal, 3, "This function is synonymous with 'getenv(\"TMP\")';" +
-                 "it returns untrustable input if the environment can be" +
-                 "set by an attacker.  It can have any content and length, " +
-                 "and the same variable can be set more than once (CWE-807, CWE-20)",
-      "Check environment variables carefully before using them",
-      "buffer", "", {'input' : 1}),
+     (normal, 3, _("This function is synonymous with 'getenv(\"TMP\")'; it returns untrustable input if the environment can be set by an attacker.  It can have any content and length, and the same variable can be set more than once (CWE-807, CWE-20)"),
+      _("Check environment variables carefully before using them"),
+      shared_types['buffer'], "", {'input' : 1}),
 
 
   # These are Windows-unique:
@@ -1120,92 +1122,91 @@ c_ruleset = {
   "RpcImpersonateClient|ImpersonateLoggedOnUser|CoImpersonateClient|" +
      "ImpersonateNamedPipeClient|ImpersonateDdeClientWindow|ImpersonateSecurityContext|" +
      "SetThreadToken":
-     (normal, 4, "If this call fails, the program could fail to drop heightened privileges (CWE-250)",
-      "Make sure the return value is checked, and do not continue if a failure is reported",
-      "access", "", {}),
+     (normal, 4, _("If this call fails, the program could fail to drop heightened privileges (CWE-250)"),
+      _("Make sure the return value is checked, and do not continue if a failure is reported"),
+      shared_types['access'], "", {}),
 
   "InitializeCriticalSection":
-     (normal, 3, "Exceptions can be thrown in low-memory situations",
-      "Use InitializeCriticalSectionAndSpinCount instead",
-      "misc", "", {}),
+     (normal, 3, _("Exceptions can be thrown in low-memory situations"),
+      _("Use InitializeCriticalSectionAndSpinCount instead"),
+      shared_types['misc'], "", {}),
 
   "EnterCriticalSection":
-     (normal, 3, "On some versions of Windows, exceptions can be thrown in low-memory situations",
-      "Use InitializeCriticalSectionAndSpinCount instead",
-      "misc", "", {}),
+     (normal, 3, _("On some versions of Windows, exceptions can be thrown in low-memory situations"),
+      _("Use InitializeCriticalSectionAndSpinCount instead"),
+      shared_types['misc'], "", {}),
 
   "LoadLibrary|LoadLibraryEx":
-     (normal, 3, "Ensure that the full path to the library is specified, or current directory may be used (CWE-829, CWE-20)",
-      "Use registry entry or GetWindowsDirectory to find library path, if you aren't already",
-      "misc", "", {'input' : 1}),
+     (normal, 3, _("Ensure that the full path to the library is specified, or current directory may be used (CWE-829, CWE-20)"),
+      _("Use registry entry or GetWindowsDirectory to find library path, if you aren't already"),
+      shared_types['misc'], "", {'input' : 1}),
 
   "SetSecurityDescriptorDacl":
      (c_hit_if_null, 5,
-      "Never create NULL ACLs; an attacker can set it to Everyone (Deny All Access), " +
-        "which would even forbid administrator access (CWE-732)",
+      _("Never create NULL ACLs; an attacker can set it to Everyone (Deny All Access), which would even forbid administrator access (CWE-732)"),
       "",
-      "misc", "", {'check_for_null' : 3}),
+      shared_types['misc'], "", {'check_for_null' : 3}),
 
   "AddAccessAllowedAce":
      (normal, 3,
-      "This doesn't set the inheritance bits in the access control entry (ACE) header (CWE-732)",
-      "Make sure that you set inheritance by hand if you wish it to inherit",
-      "misc", "", {}),
+      _("This doesn't set the inheritance bits in the access control entry (ACE) header (CWE-732)"),
+      _("Make sure that you set inheritance by hand if you wish it to inherit"),
+      shared_types['misc'], "", {}),
 
   "getlogin":
      (normal, 4,
-      "It's often easy to fool getlogin.  Sometimes it does not work at all, because some program messed up the utmp file.  Often, it gives only the first 8 characters of the login name. The user currently logged in on the controlling tty of our program need not be the user who started it.  Avoid getlogin() for security-related purposes (CWE-807)",
-      "Use getpwuid(geteuid()) and extract the desired information instead",
-      "misc", "", {}),
+      _("It's often easy to fool getlogin.  Sometimes it does not work at all, because some program messed up the utmp file.  Often, it gives only the first 8 characters of the login name. The user currently logged in on the controlling tty of our program need not be the user who started it.  Avoid getlogin() for security-related purposes (CWE-807)"),
+      _("Use getpwuid(geteuid()) and extract the desired information instead"),
+      shared_types['misc'], "", {}),
 
   "cuserid":
      (normal, 4,
-      "Exactly what cuserid() does is poorly defined (e.g., some systems use the effective uid, like Linux, while others like System V use the real uid). Thus, you can't trust what it does. It's certainly not portable (The cuserid function was included in the 1988 version of POSIX, but removed from the 1990 version).  Also, if passed a non-null parameter, there's a risk of a buffer overflow if the passed-in buffer is not at least L_cuserid characters long (CWE-120)",
-      "Use getpwuid(geteuid()) and extract the desired information instead",
-      "misc", "", {}),
+      _("Exactly what cuserid() does is poorly defined (e.g., some systems use the effective uid, like Linux, while others like System V use the real uid). Thus, you can't trust what it does. It's certainly not portable (The cuserid function was included in the 1988 version of POSIX, but removed from the 1990 version).  Also, if passed a non-null parameter, there's a risk of a buffer overflow if the passed-in buffer is not at least L_cuserid characters long (CWE-120)"),
+      _("Use getpwuid(geteuid()) and extract the desired information instead"),
+      shared_types['misc'], "", {}),
 
   "getpw":
      (normal, 4,
-      "This function is dangerous; it may overflow the provided buffer. It extracts data from a 'protected' area, but most systems have many commands to let users modify the protected area, and it's not always clear what their limits are.  Best to avoid using this function altogether (CWE-676, CWE-120)",
-      "Use getpwuid() instead",
-      "buffer", "", {}),
+      _("This function is dangerous; it may overflow the provided buffer. It extracts data from a 'protected' area, but most systems have many commands to let users modify the protected area, and it's not always clear what their limits are.  Best to avoid using this function altogether (CWE-676, CWE-120)"),
+      _("Use getpwuid() instead"),
+      shared_types['buffer'], "", {}),
 
   "getpass":
      (normal, 4,
-      "This function is obsolete and not portable. It was in SUSv2 but removed by POSIX.2.  What it does exactly varies considerably between systems, particularly in where its prompt is displayed and where it gets its data (e.g., /dev/tty, stdin, stderr, etc.) (CWE-676)",
-      "Make the specific calls to do exactly what you want.  If you continue to use it, or write your own, be sure to zero the password as soon as possible to avoid leaving the cleartext password visible in the process' address space",
-      "misc", "", {}),
+      _("This function is obsolete and not portable. It was in SUSv2 but removed by POSIX.2.  What it does exactly varies considerably between systems, particularly in where its prompt is displayed and where it gets its data (e.g., /dev/tty, stdin, stderr, etc.) (CWE-676)"),
+      _("Make the specific calls to do exactly what you want.  If you continue to use it, or write your own, be sure to zero the password as soon as possible to avoid leaving the cleartext password visible in the process' address space"),
+      shared_types['misc'], "", {}),
 
   "gsignal|ssignal":
      (normal, 2,
-      "These functions are considered obsolete on most systems, and very non-poertable (Linux-based systems handle them radically different, basically if gsignal/ssignal were the same as raise/signal respectively, while System V considers them a separate set and obsolete) (CWE-676)",
-      "Switch to raise/signal, or some other signalling approach",
-      "obsolete", "", {}),
+      _("These functions are considered obsolete on most systems, and very non-poertable (Linux-based systems handle them radically different, basically if gsignal/ssignal were the same as raise/signal respectively, while System V considers them a separate set and obsolete) (CWE-676)"),
+      _("Switch to raise/signal, or some other signalling approach"),
+      shared_types['obsolete'], "", {}),
 
   "memalign":
      (normal, 1,
-     "On some systems (though not Linux-based systems) an attempt to free() results from memalign() may fail. This may, on a few systems, be exploitable.  Also note that memalign() may not check that the boundary parameter is correct (CWE-676)",
-      "Use posix_memalign instead (defined in POSIX's 1003.1d).  Don't switch to valloc(); it is marked as obsolete in BSD 4.3, as legacy in SUSv2, and is no longer defined in SUSv3.  In some cases, malloc()'s alignment may be sufficient",
-      "free", "", {}),
+     _("On some systems (though not Linux-based systems) an attempt to free() results from memalign() may fail. This may, on a few systems, be exploitable.  Also note that memalign() may not check that the boundary parameter is correct (CWE-676)"),
+      _("Use posix_memalign instead (defined in POSIX's 1003.1d).  Don't switch to valloc(); it is marked as obsolete in BSD 4.3, as legacy in SUSv2, and is no longer defined in SUSv3.  In some cases, malloc()'s alignment may be sufficient"),
+      shared_types['free'], "", {}),
 
   "ulimit":
      (normal, 1,
-     "This C routine is considered obsolete (as opposed to the shell command by the same name, which is NOT obsolete) (CWE-676)",
-      "Use getrlimit(2), setrlimit(2), and sysconf(3) instead",
-      "obsolete", "", {}),
+     _("This C routine is considered obsolete (as opposed to the shell command by the same name, which is NOT obsolete) (CWE-676)"),
+      _("Use getrlimit(2), setrlimit(2), and sysconf(3) instead"),
+      shared_types['obsolete'], "", {}),
 
   "usleep":
      (normal, 1,
-     "This C routine is considered obsolete (as opposed to the shell command by the same name).   The interaction of this function with SIGALRM and other timer functions such as sleep(), alarm(), setitimer(), and nanosleep() is unspecified (CWE-676)",
-      "Use nanosleep(2) or setitimer(2) instead",
-      "obsolete", "", {}),
+     _("This C routine is considered obsolete (as opposed to the shell command by the same name).   The interaction of this function with SIGALRM and other timer functions such as sleep(), alarm(), setitimer(), and nanosleep() is unspecified (CWE-676)"),
+      _("Use nanosleep(2) or setitimer(2) instead"),
+      shared_types['obsolete'], "", {}),
 
 
    # Input functions, useful for -I
   "recv|recvfrom|recvmsg|fread|readv":
-     (normal, 0, "Function accepts input from outside program (CWE-20)",
-      "Make sure input data is filtered, especially if an attacker could manipulate it",
-      "input", "", {'input' : 1}),
+     (normal, 0, _("Function accepts input from outside program (CWE-20)"),
+      _("Make sure input data is filtered, especially if an attacker could manipulate it"),
+      shared_types['input'], "", {'input' : 1}),
 
 
   # TODO: detect C++'s:   cin >> charbuf, where charbuf is a char array; the problem
@@ -1215,6 +1216,7 @@ c_ruleset = {
   # TODO: cwd("..") in user's space - TOCTOU vulnerability
   # TODO: There are many more rules to add, esp. for TOCTOU.
   }
+
 
 template_ruleset = {
   # This is a template for adding new entries (the key is impossible):
@@ -1319,9 +1321,9 @@ def process_c_file(f, patch_infos):
     # This file isn't in the patch list, so don't bother analyzing it.
     if not quiet:
       if output_format:
-        print "Skipping unpatched file ", h(f), "<br>"
+        print _("Skipping unpatched file "), h(f), "<br>"
       else:
-        print "Skipping unpatched file", f
+        print _("Skipping unpatched file"), f
       sys.stdout.flush()
     return
 
@@ -1330,13 +1332,13 @@ def process_c_file(f, patch_infos):
   else:
     # Symlinks should never get here, but just in case...
     if ((not allowlink) and os.path.islink(f)):
-      print "BUG! Somehow got a symlink in process_c_file!"
+      print _("BUG! Somehow got a symlink in process_c_file!")
       num_links_skipped = num_links_skipped + 1
       return
     try:
       input = open(f, "r")
     except: 
-      print "Error: failed to open", h(f)
+      print _("Error: failed to open"), h(f)
       sys.exit(1)
 
   # Read ENTIRE file into memory.  Use readlines() to convert \n if necessary.
@@ -1349,9 +1351,9 @@ def process_c_file(f, patch_infos):
 
   if not quiet:
     if output_format:
-      print "Examining", h(f), "<br>"
+      print _("Examining"), h(f), "<br>"
     else:
-      print "Examining", f
+      print _("Examining"), f
     sys.stdout.flush()
 
   text = string.join(input.readlines(),"")
@@ -1455,8 +1457,8 @@ def process_c_file(f, patch_infos):
           # else some other character, which we ignore.
   # End of loop through text. Wrap up.
   if codeinline: sloc = sloc + 1
-  if incomment: error("File ended while in comment.")
-  if instring: error("File ended while in string.")
+  if incomment: error(_("File ended while in comment."))
+  if instring: error(_("File ended while in string."))
 
 def expand_ruleset(ruleset):
   # Rulesets can have compressed sets of rules
@@ -1467,7 +1469,7 @@ def expand_ruleset(ruleset):
     if string.find(rule, "|") != -1:  # We found a rule to expand.
       for newrule in string.split(rule, "|"):
         if newrule in ruleset:
-          print "Error: Rule %s, when expanded, overlaps %s" % ( rule, newrule )
+          print _("Error: Rule {rule}, when expanded, overlaps {newrule}").format(rule=rule, newrule=newrule)
           sys.exit(1)
         ruleset[newrule] = ruleset[rule]
       del ruleset[rule]
@@ -1485,7 +1487,7 @@ def display_ruleset(ruleset):
 def initialize_ruleset():
   expand_ruleset(c_ruleset)
   if showheading:
-    print "Number of rules (primarily dangerous function names) in C/C++ ruleset:", len(c_ruleset)
+    print _("Number of rules (primarily dangerous function names) in C/C++ ruleset:"), len(c_ruleset)
     if output_format: print "<p>"
   if list_rules:
     display_ruleset(c_ruleset)
@@ -1503,17 +1505,17 @@ def display_header():
       print "<html>"
       print "<head>"
       print '<meta http-equiv="Content-type" content="text/html; charset=utf8">'
-      print "<title>Flawfinder Results</title>"
+      print _("<title>Flawfinder Results</title>")
       print '<meta name="author" content="David A. Wheeler">'
       print '<meta name="keywords" lang="en" content="flawfinder results, security scan">'
       print "</head>"
       print "<body>"
-      print "<h1>Flawfinder Results</h1>"
-      print "Here are the security scan results from"
-      print '<a href="http://www.dwheeler.com/flawfinder">Flawfinder version %s</a>,' % version
-      print '(C) 2001-2014 <a href="http://www.dwheeler.com">David A. Wheeler</a>.'
+      print _("<h1>Flawfinder Results</h1>")
+      print _("Here are the security scan results from")
+      print _('<a href="http://www.dwheeler.com/flawfinder">Flawfinder version {version}</a>,').format(version=version)
+      print _('(C) 2001-2014 <a href="http://www.dwheeler.com">David A. Wheeler</a>.')
     else:
-      print "Flawfinder version %s, (C) 2001-2014 David A. Wheeler." % version
+      print _("Flawfinder version {version}, (C) 2001-2014 David A. Wheeler.").format(version=version)
     displayed_header = 1
 
 
@@ -1536,12 +1538,12 @@ def maybe_process_file(f, patch_infos):
   global num_links_skipped, num_dotdirs_skipped
   if os.path.isdir(f):
     if (not allowlink) and os.path.islink(f):
-      if not quiet: print_warning("Skipping symbolic link directory " + h(f))
+      if not quiet: print_warning(_("Skipping symbolic link directory ") + h(f))
       num_links_skipped = num_links_skipped + 1
       return
     base_filename = os.path.basename(f)
     if (skipdotdir and len(base_filename) > 1 and ("." == base_filename[0])):
-      if not quiet: print_warning("Skipping directory with initial dot " + h(f))
+      if not quiet: print_warning(_("Skipping directory with initial dot ") + h(f))
       num_dotdirs_skipped = num_dotdirs_skipped + 1
       return
     for file in os.listdir(f):
@@ -1556,12 +1558,12 @@ def maybe_process_file(f, patch_infos):
     if extension in c_extensions:
       # Its name appears to be a C/C++ source code file.
       if (not allowlink) and os.path.islink(f):
-        if not quiet: print_warning("Skipping symbolic link file " + h(f))
+        if not quiet: print_warning(_("Skipping symbolic link file ") + h(f))
         num_links_skipped = num_links_skipped + 1
       elif not os.path.isfile(f):
         # Skip anything not a normal file.  This is so that
         # device files, etc. won't cause trouble.
-        if not quiet: print_warning("Skipping non-regular file " + h(f))
+        if not quiet: print_warning(_("Skipping non-regular file ") + h(f))
       else:
         # We want to know the difference only with files found in the patch.
         if ((patch_infos == None) or (patch_infos != None and
@@ -1583,7 +1585,7 @@ def process_file_args(files, patch_infos):
   global num_links_skipped
   for f in files:
     if (not allowlink) and os.path.islink(f):
-       if not quiet: print_warning("Skipping symbolic link " + h(f))
+       if not quiet: print_warning(_("Skipping symbolic link ") + h(f))
        num_links_skipped = num_links_skipped + 1
     elif os.path.isfile(f) or f == "-":
        # If on the command line, FORCE processing of it.
@@ -1599,14 +1601,14 @@ def process_file_args(files, patch_infos):
     elif not os.path.exists(f):
       if not quiet:
         if h(f).startswith("\342\210\222"):
-          print_warning("Skipping non-existent filename starting with UTF-8 long dash " + h(f))
+          print_warning(_("Skipping non-existent filename starting with UTF-8 long dash ") + h(f))
         else:
-          print_warning("Skipping non-existent file " + h(f))
+          print_warning(_("Skipping non-existent file ") + h(f))
     else:
-       if not quiet: print_warning("Skipping non-regular file " + h(f))
+       if not quiet: print_warning(_("Skipping non-regular file ") + h(f))
 
 def usage():
-  print """
+  print _("""
 flawfinder [--help | -h] [--version] [--listrules]
   [--allowlink] [--followdotdir] [--nolink] 
            [--patch filename | -P filename]
@@ -1692,7 +1694,7 @@ flawfinder [--help | -h] [--version] [--listrules]
 
   For more information, please consult the manpage or available
   documentation.
-"""
+""")
 
 def process_options():
   global show_context, show_inputs, allowlink, skipdotdir, omit_time
@@ -1702,9 +1704,10 @@ def process_options():
   global show_columns, never_ignore, quiet, showheading, list_rules
   global loadhitlist, savehitlist, diffhitlist
   global patch_file
+  global _
   try:
     # Note - as a side-effect, this sets sys.argv[].
-    optlist, args = getopt.getopt(sys.argv[1:], "ce:m:nih?CSDQHIFP:",
+    optlist, args = getopt.getopt(sys.argv[1:], "ce:m:nih?CSDQHIFP:l:",
                     ["context", "minlevel=", "immediate", "inputs", "input",
                      "nolink", "falsepositive", "falsepositives",
                      "columns", "listrules", "omittime", "allowlink", "patch=",
@@ -1712,9 +1715,12 @@ def process_options():
                      "neverignore", "regex=",
                      "quiet", "dataonly", "html", "singleline",
                      "loadhitlist=", "savehitlist=", "diffhitlist=",
-                     "version", "help" ])
+                     "version", "help", 'lang=' ])
     for (opt,value) in optlist:
-      if   opt == "--context" or opt == "-c":
+      if opt == '--lang' or opt == '-l':
+        if value in LANGUAGES:
+          _ = lang_init(LANGUAGES[value])
+      elif opt == "--context" or opt == "-c":
         show_context = 1
       elif opt == "--columns" or opt == "-C":
         show_columns = 1
@@ -1763,15 +1769,15 @@ def process_options():
       elif opt == "--loadhitlist":
         loadhitlist = value
         display_header()
-        if showheading: print "Loading hits from", value
+        if showheading: print _("Loading hits from"), value
       elif opt == "--savehitlist":
         savehitlist = value
         display_header()
-        if showheading: print "Saving hitlist to", value
+        if showheading: print _("Saving hitlist to"), value
       elif opt == "--diffhitlist":
         diffhitlist = value
         display_header()
-        if showheading: print "Showing hits not in", value
+        if showheading: print _("Showing hits not in"), value
       elif opt == "--version":
         print version
         sys.exit(0)
@@ -1793,7 +1799,7 @@ def process_options():
   # use "getopt.error" here so it's compatible with both
   # Python 1.5 and Python 2.
   except getopt.error, text:
-    print "*** getopt error:", text
+    print _("*** getopt error:"), text
     usage()
     sys.exit(1)
 
@@ -1810,7 +1816,7 @@ def process_files():
       patch_infos = load_patch_info(patch_file)
     files = sys.argv[1:]
     if not files:
-        print "*** No input files"
+        print _("*** No input files")
         return None
     process_file_args(files, patch_infos)
     return 1
@@ -1829,9 +1835,9 @@ def show_final_results():
     print
     if showheading:
       if output_format:
-        print "<h2>Final Results</h2>"
+        print _("<h2>Final Results</h2>")
       else:
-        print "FINAL RESULTS:"
+        print _("FINAL RESULTS:")
         print
   hitlist.sort()
   # Display results.  The HTML format now uses
@@ -1859,18 +1865,18 @@ def show_final_results():
   # Done with list, show the post-hitlist summary.
   if showheading:
     if output_format:
-      print "<h2>Analysis Summary</h2>"
+      print _("<h2>Analysis Summary</h2>")
     else:
       print
-      print "ANALYSIS SUMMARY:"
+      print _("ANALYSIS SUMMARY:")
     if output_format:
       print "<p>"
     else:
       print
     if count > 0:
-      print "Hits =", count
+      print _("Hits ="), count
     else:
-      print "No hits found."
+      print _("No hits found.")
     if output_format:
       print "<br>"
     # Compute the amount of time spent, and lines analyzed/second.
@@ -1878,19 +1884,18 @@ def show_final_results():
     # producing the list of hits, which is reasonable.
     time_analyzing = time.time() - starttime
     if required_regex:
-      print "Hits limited to regular expression " + required_regex
-    print "Lines analyzed = %d" % sumlines,
+      print _("Hits limited to regular expression ") + required_regex
+    print _("Lines analyzed = {sumlines}").format(sumlines=sumlines),
     if time_analyzing > 0 and not omit_time:  # Avoid divide-by-zero.
-      print "in approximately %.2f seconds (%.0f lines/second)" % (
-             time_analyzing,
-             (sumlines / time_analyzing) )
+      print _("in approximately {time_analyzing:.2f} seconds ({lines_second:.0f} lines/second)").format(
+        time_analyzing=time_analyzing, lines_second=(sumlines / time_analyzing))
     else:
       print
     if output_format: print "<br>"
-    print "Physical Source Lines of Code (SLOC) = %d" % sloc
+    print _("Physical Source Lines of Code (SLOC) = {sloc}").format(sloc=sloc)
     if output_format: print "<br>"
     # Output hits@each level.
-    print "Hits@level =",
+    print _("Hits@level ="),
     for i in range(0,6):
       print "[%d] %3d" % (i, count_per_level[i]),
     if output_format:
@@ -1898,7 +1903,7 @@ def show_final_results():
     else:
       print
     # Compute hits at "level x or higher"
-    print "Hits@level+ =",
+    print _("Hits@level+ ="),
     for i in range(0,6):
       for j in range(i,6):
         count_per_level_and_up[i] = count_per_level_and_up[i] + count_per_level[j]
@@ -1910,7 +1915,7 @@ def show_final_results():
     else:
       print
     if (sloc > 0):
-      print "Hits/KSLOC@level+ =",
+      print _("Hits/KSLOC@level+ ="),
       for i in range(0,6):
         print "[%d+] %3g" % (i, count_per_level_and_up[i]*1000.0/sloc),
     if output_format:
@@ -1919,31 +1924,34 @@ def show_final_results():
       print
     #
     if num_links_skipped:
-      print "Symlinks skipped =", num_links_skipped, "(--allowlink overrides but see doc for security issue)"
+      print _("Symlinks skipped ={num_links_skipped} (--allowlink overrides but see doc for security issue)").format(
+        num_links_skipped=num_links_skipped)
       if output_format:
         print "<br>"
     if num_dotdirs_skipped:
-      print "Dot directories skipped =", num_dotdirs_skipped, "(--followdotdir overrides)"
+      print _("Dot directories skipped ={num_dotdirs_skipped} (--followdotdir overrides)").format(
+        num_dotdirs_skipped=num_dotdirs_skipped)
       if output_format:
         print "<br>"
     if num_ignored_hits > 0:
-      print "Suppressed hits =", num_ignored_hits, "(use --neverignore to show them)"
+      print _("Suppressed hits ={num_ignored_hits} (use --neverignore to show them)").format(
+        num_ignored_hits=num_ignored_hits)
       if output_format:
         print "<br>"
-    print "Minimum risk level = %d" % minimum_level
+    print _("Minimum risk level = {minimum_level}").format(minimum_level=minimum_level) 
     if output_format: print "<br>"
     if count > 0:
-       print "Not every hit is necessarily a security vulnerability."
+       print _("Not every hit is necessarily a security vulnerability.")
        if output_format:
          print "<br>"
-    print "There may be other security vulnerabilities; review your code!"
+    print _("There may be other security vulnerabilities; review your code!")
     if output_format:
       print "<br>"
-      print "See '<a href=\"http://www.dwheeler.com/secure-programs\">Secure Programming for Linux and Unix HOWTO</a>'"
-      print "(<a href=\"http://www.dwheeler.com/secure-programs\">http://www.dwheeler.com/secure-programs</a>) for more information."
+      print _("See '<a href=\"http://www.dwheeler.com/secure-programs\">Secure Programming for Linux and Unix HOWTO</a>'")
+      print _("(<a href=\"http://www.dwheeler.com/secure-programs\">http://www.dwheeler.com/secure-programs</a>) for more information.")
     else:
-      print "See 'Secure Programming for Linux and Unix HOWTO'"
-      print "(http://www.dwheeler.com/secure-programs) for more information."
+      print _("See 'Secure Programming for Linux and Unix HOWTO'")
+      print _("(http://www.dwheeler.com/secure-programs) for more information.")
     if output_format:
       print "</body>"
       print "</html>"
@@ -1952,7 +1960,7 @@ def show_final_results():
 def save_if_desired():
   # We'll save entire hitlist, even if only differences displayed.
   if savehitlist:
-    print "Saving hitlist to", savehitlist
+    print _("Saving hitlist to"), savehitlist
     f = open(savehitlist, "w")
     pickle.dump(hitlist, f)
     f.close()
@@ -1969,5 +1977,5 @@ if __name__ == '__main__':
   try:
     flawfind()
   except KeyboardInterrupt:
-    print "*** Flawfinder interrupted"
+    print _("*** Flawfinder interrupted")
 

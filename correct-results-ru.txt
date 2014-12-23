@@ -1,9 +1,9 @@
-Flawfinder version 1.31, (C) 2001-2014 David A. Wheeler.
-Number of rules (primarily dangerous function names) in C/C++ ruleset: 169
-Examining test.c
-Examining test2.c
+Flawfinder версия 1.31, (C) 2001-2014 David A. Wheeler.
+Количество правил (в первую очередь опасные названия функций) в наборе правил C/C++: 169
+﻿Изучение test.c
+﻿Изучение test2.c
 
-FINAL RESULTS:
+КОНЕЧНЫЕ РЕЗУЛЬТАТЫ:
 
 test.c:32:  [5] (buffer) gets:
   Нет проверки на переполнение буфера
@@ -13,25 +13,31 @@ test.c:56:  [5] (buffer) strncat:
   некорректно (например, некорректно
   вычисляется корректный максимальный
   размер для добавления) (CWE-120).. Consider strcat_s,
-  strlcat, or automatically resizing strings. Risk is high; the length
-  parameter appears to be a constant, instead of computing the number of
-  characters left.
+  strlcat, or automatically resizing strings. Высокий уровень
+  риска; появляется параметр длины, чтобы
+  быть постоянным,﻿вместо вычисления
+  количества оставшихся символов.
 test.c:57:  [5] (buffer) _tcsncat:
   Функция легко может быть использована
   некорректно (например, некорректно
   вычисляется корректный максимальный
   размер для добавления) (CWE-120).. Consider strcat_s,
-  strlcat, or automatically resizing strings. Risk is high; the length
-  parameter appears to be a constant, instead of computing the number of
-  characters left.
+  strlcat, or automatically resizing strings. Высокий уровень
+  риска; появляется параметр длины, чтобы
+  быть постоянным,﻿вместо вычисления
+  количества оставшихся символов.
 test.c:60:  [5] (buffer) MultiByteToWideChar:
   Требует указания максимальной длины в
-  CHARACTERS, не в байтах (CWE-120).. Risk is high, it appears that
-  the size is given as bytes, but the function requires size as characters.
+  CHARACTERS, не в байтах (CWE-120).. Высокий уровень
+  риска, кажется, что размер задан в виде
+  байтов, нофункция требует размер в
+  символах
 test.c:62:  [5] (buffer) MultiByteToWideChar:
   Требует указания максимальной длины в
-  CHARACTERS, не в байтах (CWE-120).. Risk is high, it appears that
-  the size is given as bytes, but the function requires size as characters.
+  CHARACTERS, не в байтах (CWE-120).. Высокий уровень
+  риска, кажется, что размер задан в виде
+  байтов, нофункция требует размер в
+  символах
 test.c:73:  [5] (misc) SetSecurityDescriptorDacl:
   Никогда не создаёт NULL ACL, атакующий может
   установить его в значение Все(Запретить
@@ -53,8 +59,9 @@ test.c:20:  [4] (buffer) sprintf:
 test.c:21:  [4] (buffer) sprintf:
   Нет проверки на переполнение буфера
   (CWE-120). Use sprintf_s, snprintf, or vsnprintf.
-test.c:22:  [4] (format) sprintf:
-  Potential format string problem (CWE-134). Make format string constant.
+test.c:22:  [4] (форматирование) sprintf:
+  Потенциальная проблема форматирования
+  строки (CWE-134). Make format string constant.
 test.c:23:  [4] (форматирование) printf:
   Если атакующий может влиять на
   содержание форматной строки, уязвимость
@@ -105,11 +112,13 @@ test.c:16:  [2] (buffer) strcpy:
   Нет проверки на переполнение буфера при
   копировании в аргумент-назначение (CWE-120)..
   Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily
-  misused). Risk is low because the source is a constant string.
+  misused). Уровень риска низкий, поскольку
+  источник постоянной строкой.
 test.c:19:  [2] (buffer) sprintf:
   Нет проверки на переполнение буфера
-  (CWE-120). Use sprintf_s, snprintf, or vsnprintf. Risk is low because the
-  source has a constant maximum length.
+  (CWE-120). Use sprintf_s, snprintf, or vsnprintf. Уровень риска
+  низкий, поскольку источник имеет
+  постоянную максимальную длину.
 test.c:45:  [2] (buffer) char:
   Статически определённые массивы могут
   быть неправильно ограничены, что ведёт к
@@ -147,11 +156,13 @@ test.c:15:  [1] (buffer) strcpy:
   Нет проверки на переполнение буфера при
   копировании в аргумент-назначение (CWE-120)..
   Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily
-  misused). Risk is low because the source is a constant character.
+  misused). Уровень риска низкий, поскольку
+  источник символьная константа.
 test.c:18:  [1] (buffer) sprintf:
   Нет проверки на переполнение буфера
-  (CWE-120). Use sprintf_s, snprintf, or vsnprintf. Risk is low because the
-  source is a constant character.
+  (CWE-120). Use sprintf_s, snprintf, or vsnprintf. Уровень риска
+  низкий, поскольку источник символьная
+  константа.
 test.c:26:  [1] (buffer) scanf:
   It's unclear if the %s limit in the format string is small enough
   (CWE-120). Check that the limit is sufficiently small, or use a different
@@ -181,27 +192,29 @@ test.c:58:  [1] (buffer) strlen:
   защита от подобных сбоев) (CWE-126)..
 test.c:64:  [1] (buffer) MultiByteToWideChar:
   Требует указания максимальной длины в
-  CHARACTERS, не в байтах (CWE-120).. Risk is very low, the length
-  appears to be in characters not bytes.
+  CHARACTERS, не в байтах (CWE-120).. Уровень риска
+  низкий, длина по-видимому в символах, а не
+  в байтах.
 test.c:66:  [1] (buffer) MultiByteToWideChar:
   Требует указания максимальной длины в
-  CHARACTERS, не в байтах (CWE-120).. Risk is very low, the length
-  appears to be in characters not bytes.
+  CHARACTERS, не в байтах (CWE-120).. Уровень риска
+  низкий, длина по-видимому в символах, а не
+  в байтах.
 
-ANALYSIS SUMMARY:
+ИТОГИ АНАЛИЗА:
 
-Hits = 36
-Lines analyzed = 118
-Physical Source Lines of Code (SLOC) = 80
+Просмотров =  36
+Строк проанализировано = 118
+Физическое количество строк кода (SLOC) = 80
 Hits@level = [0]   0 [1]   9 [2]   7 [3]   3 [4]  10 [5]   7
 Hits@level+ = [0+]  36 [1+]  36 [2+]  27 [3+]  20 [4+]  17 [5+]   7
 Hits/KSLOC@level+ = [0+] 450 [1+] 450 [2+] 337.5 [3+] 250 [4+] 212.5 [5+] 87.5
-Suppressed hits =2 (use --neverignore to show them)
-Minimum risk level = 1
-Not every hit is necessarily a security vulnerability.
-There may be other security vulnerabilities; review your code!
-See 'Secure Programming for Linux and Unix HOWTO'
-(http://www.dwheeler.com/secure-programs) for more information.
+﻿Подавленные хиты = 2 (используйте --neverignore, чтобы показать их)
+﻿Минимальный уровень риска = 1
+﻿Не каждый хит это обязательно уязвимость.
+﻿Там могут быть и другие уязвимости; Проверьте код!
+Смотрите 'Secure Programming for Linux and Unix HOWTO'
+(http://www.dwheeler.com/secure-programs) для получения дополнительной информации.
 
 Testing for no ending newline:
-Lines analyzed = 32
+Строк проанализировано = 32

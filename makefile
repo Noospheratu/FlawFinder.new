@@ -125,22 +125,36 @@ time:
 
 test: flawfinder test.c test2.c
 	# Omit time report so that results are always the same textually.
-	./flawfinder --omittime test.c test2.c > test-results.txt
+	./flawfinder --lang=en --omittime test.c test2.c > test-results.txt
 	echo >> test-results.txt
 	echo "Testing for no ending newline:" >> test-results.txt
-	./flawfinder --omittime no-ending-newline.c | \
+	./flawfinder --lang=en --omittime no-ending-newline.c | \
 	  grep 'Lines analyzed' >> test-results.txt
-	./flawfinder --omittime --html --context test.c test2.c > test-results.html
+	./flawfinder --lang=en --omittime --html --context test.c test2.c > test-results.html
 	@echo "Differences from expected results:"
 	@diff -u correct-results.txt test-results.txt
 	@diff -u correct-results.html test-results.html
 
-check: test
+test-ru: flawfinder test.c test2.c
+	# Omit time report so that results are always the same textually.
+	./flawfinder --lang=ru --omittime test.c test2.c > test-results-ru.txt
+	echo >> test-results-ru.txt
+	echo "Testing for no ending newline:" >> test-results-ru.txt
+	./flawfinder --lang=ru --omittime no-ending-newline.c | \
+	  grep 'Строк проанализировано' >> test-results-ru.txt
+	./flawfinder --lang=ru --omittime --html --context test.c test2.c > test-results-ru.html
+	@echo "Differences from expected results:"
+	@diff -u correct-results-ru.txt test-results-ru.txt
+	@diff -u correct-results-ru.html test-results-ru.html
+
+check: test test-ru
 
 # Run "make test-is-correct" if the results are as expected.
 test-is-correct: test-results.txt
 	mv test-results.txt correct-results.txt
 	mv test-results.html correct-results.html
+	mv test-results-ru.txt correct-results-ru.txt
+	mv test-results-ru.html correct-results-ru.html
 
 profile:
 	/usr/lib/python1.5/profile.py ./flawfinder > profile-results $(SAMPLE_DIR)/*/*.[ch] > profile-results 
@@ -187,6 +201,9 @@ show-cwes: cwe
 
 .PHONY: install clean test check profile test-is-correct rpm uninstall distribute my-install show-cwes
 
+#parse english localization
+generate-locale: 
+	xgettext --from-code=UTF-8 -o i18n/en_US/LC_MESSAGES/flawfinder.po -L Python flawfinder
 
 # When I switch to using "DistUtils", I may need to move the MANIFEST.in
 # file into a subdirectory (named flawfinder-versionnumber).

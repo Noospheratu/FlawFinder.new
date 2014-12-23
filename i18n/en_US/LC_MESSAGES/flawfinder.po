@@ -1,0 +1,1077 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-12-23 21:00+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: flawfinder:126
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#: flawfinder:149
+msgid "Warning: "
+msgstr ""
+
+#: flawfinder:256 flawfinder:1341
+msgid "Error: failed to open"
+msgstr ""
+
+#: flawfinder:271
+msgid "Error: Unrecognized patch format"
+msgstr ""
+
+#: flawfinder:282
+#, python-brace-format
+msgid "filename occurs more than once in the patch: {patched_filename}"
+msgstr ""
+
+#: flawfinder:290
+msgid ""
+"wrong type of patch file: we have a line number without having seen a "
+"filename"
+msgstr ""
+
+#: flawfinder:525
+#, python-brace-format
+msgid ""
+"Parsing failed to find end of parameter list; semicolon terminated it in "
+"{text}"
+msgstr ""
+
+#: flawfinder:529
+#, python-brace-format
+msgid "Parsing failed to find end of parameter list in {text}"
+msgstr ""
+
+#: flawfinder:578 flawfinder:662
+msgid "Risk is low because the source is a constant character."
+msgstr ""
+
+#: flawfinder:581
+msgid "Risk is low because the source is a constant string."
+msgstr ""
+
+#: flawfinder:616
+msgid "Risk is high; the length parameter appears to be a constant, "
+msgstr ""
+
+#: flawfinder:617
+msgid "instead of computing the number of characters left."
+msgstr ""
+
+#: flawfinder:632
+msgid "On some very old systems, snprintf is incorrectly implemented "
+msgstr ""
+
+#: flawfinder:633
+msgid "and permits buffer overflows; there are also incompatible "
+msgstr ""
+
+#: flawfinder:634
+msgid "standard definitions of it"
+msgstr ""
+
+#: flawfinder:636
+msgid "Check it during installation, or use something else"
+msgstr ""
+
+#: flawfinder:637
+msgid "port"
+msgstr ""
+
+#: flawfinder:641
+msgid ""
+"Constant format string, so not considered very risky (there's some residual "
+"risk, especially in a loop)."
+msgstr ""
+
+#: flawfinder:653
+msgid "format string parameter problem"
+msgstr ""
+
+#: flawfinder:654
+msgid "Check if required parameters present and quotes close."
+msgstr ""
+
+#: flawfinder:656 flawfinder:675 flawfinder:768
+msgid "format"
+msgstr ""
+
+#: flawfinder:668
+msgid "Risk is low because the source has a constant maximum length."
+msgstr ""
+
+#: flawfinder:672
+msgid "Potential format string problem (CWE-134)"
+msgstr ""
+
+#: flawfinder:673
+msgid "Make format string constant"
+msgstr ""
+
+#: flawfinder:694
+#, python-format
+msgid ""
+"It's unclear if the %s limit in the format string is small enough (CWE-120)"
+msgstr ""
+
+#: flawfinder:695
+msgid ""
+"Check that the limit is sufficiently small, or use a different input function"
+msgstr ""
+
+#: flawfinder:700
+msgid "No risky scanf format detected."
+msgstr ""
+
+#: flawfinder:703
+msgid "If the scanf format is influenceable by an attacker, it's exploitable."
+msgstr ""
+
+#: flawfinder:721
+msgid "Risk is high, it appears that the size is given as bytes, but the "
+msgstr ""
+
+#: flawfinder:722
+msgid "function requires size as characters."
+msgstr ""
+
+#: flawfinder:729
+msgid "Risk is very low, the length appears to be in characters not bytes."
+msgstr ""
+
+#: flawfinder:767
+msgid "buffer"
+msgstr ""
+
+#: flawfinder:769
+msgid "race"
+msgstr ""
+
+#: flawfinder:770
+msgid "misc"
+msgstr ""
+
+#: flawfinder:771
+msgid "access"
+msgstr ""
+
+#: flawfinder:772
+msgid "shell"
+msgstr ""
+
+#: flawfinder:773
+msgid "integer"
+msgstr ""
+
+#: flawfinder:774
+msgid "random"
+msgstr ""
+
+#: flawfinder:775
+msgid "crypto"
+msgstr ""
+
+#: flawfinder:776
+msgid "obsolete"
+msgstr ""
+
+#: flawfinder:777
+msgid "free"
+msgstr ""
+
+#: flawfinder:778
+msgid "input"
+msgstr ""
+
+#: flawfinder:779
+msgid "tmpfile"
+msgstr ""
+
+#: flawfinder:785 flawfinder:790 flawfinder:795
+msgid ""
+"Does not check for buffer overflows when copying to destination (CWE-120)"
+msgstr ""
+
+#: flawfinder:786
+msgid ""
+"Consider using strcpy_s, strncpy, or strlcpy (warning, strncpy is easily "
+"misused)"
+msgstr ""
+
+#: flawfinder:791
+msgid ""
+"Consider using a function version that stops copying at the end of the buffer"
+msgstr ""
+
+#: flawfinder:796
+msgid "Make sure destination can always hold the source data"
+msgstr ""
+
+#: flawfinder:800 flawfinder:805
+msgid ""
+"Does not check for buffer overflows when concatenating to destination "
+"(CWE-120)"
+msgstr ""
+
+#: flawfinder:801
+msgid ""
+"Consider using strcat_s, strncat, or strlcat (warning, strncat is easily "
+"misused)"
+msgstr ""
+
+#: flawfinder:812 flawfinder:819
+msgid ""
+"Easily used incorrectly; doesn't always \\0-terminate or check for invalid "
+"pointers (CWE-120)"
+msgstr ""
+
+#: flawfinder:827 flawfinder:834
+msgid ""
+"Easily used incorrectly (e.g., incorrectly computing the correct maximum "
+"size to add) (CWE-120)"
+msgstr ""
+
+#: flawfinder:828 flawfinder:835
+msgid "Consider strcat_s, strlcat, or automatically resizing strings"
+msgstr ""
+
+#: flawfinder:839
+msgid "Subject to buffer overflow if buffer is not as big as claimed (CWE-120)"
+msgstr ""
+
+#: flawfinder:840
+msgid "Ensure that destination buffer is sufficiently large"
+msgstr ""
+
+#: flawfinder:844
+msgid ""
+"Statically-sized arrays can be improperly restricted, leading to potential "
+"overflows or other issues (CWE-119:CWE-120)"
+msgstr ""
+
+#: flawfinder:845
+msgid ""
+"Perform bounds checking, use functions that limit length, or ensure that the "
+"size is larger than the maximum possible length"
+msgstr ""
+
+#: flawfinder:850
+msgid "Does not check for buffer overflows (CWE-120, CWE-20)"
+msgstr ""
+
+#: flawfinder:851
+msgid "Use fgets() instead"
+msgstr ""
+
+#: flawfinder:857
+msgid "Does not check for buffer overflows (CWE-120)"
+msgstr ""
+
+#: flawfinder:858
+msgid "Use sprintf_s, snprintf, or vsnprintf"
+msgstr ""
+
+#: flawfinder:863 flawfinder:869
+msgid ""
+"If format strings can be influenced by an attacker, they can be exploited "
+"(CWE-134)"
+msgstr ""
+
+#: flawfinder:864 flawfinder:870 flawfinder:883
+msgid "Use a constant for the format specification"
+msgstr ""
+
+#: flawfinder:876
+msgid ""
+"If syslog's format strings can be influenced by an attacker, they can be "
+"exploited (CWE-134)"
+msgstr ""
+
+#: flawfinder:877
+msgid "Use a constant format string for syslog"
+msgstr ""
+
+#: flawfinder:882
+msgid ""
+"If format strings can be influenced by an attacker, they can be exploited, "
+"and note that sprintf variations do not always \\0-terminate (CWE-134)"
+msgstr ""
+
+#: flawfinder:888 flawfinder:894
+#, python-format
+msgid ""
+"The scanf() family's %s operation, without a limit specification, permits "
+"buffer overflows (CWE-120, CWE-20)"
+msgstr ""
+
+#: flawfinder:889 flawfinder:895
+#, python-format
+msgid "Specify a limit to %s, or use a different input function"
+msgstr ""
+
+#: flawfinder:902
+msgid ""
+"Does not handle strings that are not \\0-terminated; if given one it may "
+"perform an over-read (it could cause a crash if unprotected) (CWE-126)"
+msgstr ""
+
+#: flawfinder:909
+msgid "Requires maximum length in CHARACTERS, not bytes (CWE-120)"
+msgstr ""
+
+#: flawfinder:915 flawfinder:921
+msgid "This function does not protect against buffer overflows (CWE-120)"
+msgstr ""
+
+#: flawfinder:916
+msgid ""
+"Ensure the destination has 4 times the size of the source, to leave room for "
+"expansion"
+msgstr ""
+
+#: flawfinder:922
+msgid "Ensure that destination is at least as long as the source"
+msgstr ""
+
+#: flawfinder:927
+msgid ""
+"This function does not protect against buffer overflows, and some "
+"implementations can overflow internally (CWE-120/CWE-785)"
+msgstr ""
+
+#: flawfinder:928
+msgid ""
+"Ensure that the destination buffer is at least of size MAXPATHLEN, and to "
+"protect against implementation problems, the input argument should also be "
+"checked to ensure it is no larger than MAXPATHLEN"
+msgstr ""
+
+#: flawfinder:933
+msgid ""
+"Some older implementations do not protect against internal buffer overflows "
+"(CWE-120, CWE-20)"
+msgstr ""
+
+#: flawfinder:934
+msgid ""
+"Check implementation on installation, or limit the size of all string inputs"
+msgstr ""
+
+#: flawfinder:939
+msgid "Some implementations may overflow buffers (CWE-120, CWE-20)"
+msgstr ""
+
+#: flawfinder:945
+msgid ""
+"This does not protect against buffer overflows by itself, so use with "
+"caution (CWE-120, CWE-20)"
+msgstr ""
+
+#: flawfinder:946
+msgid "Use getcwd instead"
+msgstr ""
+
+#: flawfinder:952
+msgid ""
+"Check buffer boundaries if used in a loop including recursive loops "
+"(CWE-120, CWE-20)"
+msgstr ""
+
+#: flawfinder:958
+msgid ""
+"This usually indicates a security flaw.  If an attacker can change anything "
+"along the path between the call to access() and the file's actual use (e.g., "
+"by moving files), the attacker can exploit the race condition (CWE-362/"
+"CWE-367)"
+msgstr ""
+
+#: flawfinder:959
+msgid ""
+"Set up the correct permissions (e.g., using setuid()) and try to open the "
+"file directly"
+msgstr ""
+
+#: flawfinder:964 flawfinder:969 flawfinder:974
+msgid ""
+"This accepts filename arguments; if an attacker can move those files, a race "
+"condition results. (CWE-362)"
+msgstr ""
+
+#: flawfinder:965
+msgid "Use fchown( ) instead"
+msgstr ""
+
+#: flawfinder:970
+msgid "Use fchgrp( ) instead"
+msgstr ""
+
+#: flawfinder:975
+msgid "Use fchmod( ) instead"
+msgstr ""
+
+#: flawfinder:979
+msgid ""
+"On some old systems, vfork() permits race conditions, and it's very "
+"difficult to use correctly (CWE-362)"
+msgstr ""
+
+#: flawfinder:980
+msgid "Use fork() instead"
+msgstr ""
+
+#: flawfinder:984
+msgid ""
+"This accepts filename arguments; if an attacker can move those files or "
+"change the link content, a race condition results. Also, it does not "
+"terminate with ASCII NUL. (CWE-362, CWE-20)"
+msgstr ""
+
+#: flawfinder:987
+msgid "Reconsider approach"
+msgstr ""
+
+#: flawfinder:992
+msgid ""
+"Function tmpfile() has a security flaw on some systems (e.g., older System V "
+"systems) (CWE-377)"
+msgstr ""
+
+#: flawfinder:997 flawfinder:1004
+msgid "Temporary file race condition (CWE-377)"
+msgstr ""
+
+#: flawfinder:1010
+msgid ""
+"Potential for temporary file vulnerability in some circumstances.  Some "
+"older Unix-like systems create temp files with permission to write by all by "
+"default, so be sure to set the umask to override this. Also, some older Unix "
+"systems might fail to use O_EXCL when opening the file, so make sure that "
+"O_EXCL is used by the library (CWE-377)"
+msgstr ""
+
+#: flawfinder:1016
+msgid ""
+"Check when opening files - can an attacker redirect it (via symlinks), force "
+"the opening of special file type (e.g., device files), move things around to "
+"create a race condition, control its ancestors, or change its contents? "
+"(CWE-362)"
+msgstr ""
+
+#: flawfinder:1022
+msgid ""
+"Ensure that umask is given most restrictive possible setting (e.g., 066 or "
+"077) (CWE-732)"
+msgstr ""
+
+#: flawfinder:1029
+msgid ""
+"Temporary file race condition in certain cases (e.g., if run as SYSTEM in "
+"many versions of Windows) (CWE-377)"
+msgstr ""
+
+#: flawfinder:1036 flawfinder:1043
+msgid ""
+"This causes a new program to execute and is difficult to use safely (CWE-78)"
+msgstr ""
+
+#: flawfinder:1037 flawfinder:1044
+msgid ""
+"try using a library call that implements the same functionality if available"
+msgstr ""
+
+#: flawfinder:1051 flawfinder:1059
+msgid ""
+"This causes a new process to execute and is difficult to use safely (CWE-78)"
+msgstr ""
+
+#: flawfinder:1052
+msgid "Especially watch out for embedded spaces"
+msgstr ""
+
+#: flawfinder:1060
+msgid ""
+"Specify the application path in the first argument, NOT as part of the "
+"second, or embedded spaces could allow an attacker to force a different "
+"program to run"
+msgstr ""
+
+#: flawfinder:1065
+msgid ""
+"Unless checked, the resulting number can exceed the expected range (CWE-190)"
+msgstr ""
+
+#: flawfinder:1066
+msgid ""
+"If source untrusted, check both minimum and maximum, even if the input had "
+"no minus sign (large numbers can roll over into negative number; consider "
+"saving to an unsigned value if that is intended)"
+msgstr ""
+
+#: flawfinder:1072
+msgid ""
+"This function is not sufficiently random for security-related functions such "
+"as key and nonce creation (CWE-327)"
+msgstr ""
+
+#: flawfinder:1073
+msgid "use a more secure technique for acquiring random values"
+msgstr ""
+
+#: flawfinder:1078
+msgid ""
+"Function crypt is a poor one-way hashing algorithm; since it only accepts "
+"passwords of 8 characters or less, and only a two-byte salt, it is "
+"excessively vulnerable to dictionary attacks given today's faster computing "
+"equipment (CWE-327)"
+msgstr ""
+
+#: flawfinder:1079
+msgid ""
+"Use a different algorithm, such as SHA-1, with a larger non-repeating salt"
+msgstr ""
+
+#: flawfinder:1085
+msgid ""
+"DES only supports a 56-bit keysize, which is too small given today's "
+"computers (CWE-327)"
+msgstr ""
+
+#: flawfinder:1086 flawfinder:1093
+msgid ""
+"Use a different patent-free encryption algorithm with a larger keysize, such "
+"as 3DES or AES"
+msgstr ""
+
+#: flawfinder:1092
+msgid "These keysizes are too small given today's computers (CWE-327)"
+msgstr ""
+
+#: flawfinder:1098
+msgid ""
+"chroot can be very helpful, but is hard to use correctly (CWE-250, CWE-22)"
+msgstr ""
+
+#: flawfinder:1099
+msgid ""
+"Make sure the program immediately chdir(\"/\"), closes file descriptors, and "
+"drops root privileges, and that all necessary files (and no more!) are in "
+"the new root"
+msgstr ""
+
+#: flawfinder:1104
+msgid ""
+"Environment variables are untrustable input if they can be set by an "
+"attacker.  They can have any content and length, and the same variable can "
+"be set more than once (CWE-807, CWE-20)"
+msgstr ""
+
+#: flawfinder:1105 flawfinder:1110 flawfinder:1115
+msgid "Check environment variables carefully before using them"
+msgstr ""
+
+#: flawfinder:1109
+msgid ""
+"This function is synonymous with 'getenv(\"HOME\")'; it returns untrustable "
+"input if the environment can be set by an attacker.  It can have any content "
+"and length, and the same variable can be set more than once (CWE-807, CWE-20)"
+msgstr ""
+
+#: flawfinder:1114
+msgid ""
+"This function is synonymous with 'getenv(\"TMP\")'; it returns untrustable "
+"input if the environment can be set by an attacker.  It can have any content "
+"and length, and the same variable can be set more than once (CWE-807, CWE-20)"
+msgstr ""
+
+#: flawfinder:1125
+msgid ""
+"If this call fails, the program could fail to drop heightened privileges "
+"(CWE-250)"
+msgstr ""
+
+#: flawfinder:1126
+msgid ""
+"Make sure the return value is checked, and do not continue if a failure is "
+"reported"
+msgstr ""
+
+#: flawfinder:1130
+msgid "Exceptions can be thrown in low-memory situations"
+msgstr ""
+
+#: flawfinder:1131 flawfinder:1136
+msgid "Use InitializeCriticalSectionAndSpinCount instead"
+msgstr ""
+
+#: flawfinder:1135
+msgid ""
+"On some versions of Windows, exceptions can be thrown in low-memory "
+"situations"
+msgstr ""
+
+#: flawfinder:1140
+msgid ""
+"Ensure that the full path to the library is specified, or current directory "
+"may be used (CWE-829, CWE-20)"
+msgstr ""
+
+#: flawfinder:1141
+msgid ""
+"Use registry entry or GetWindowsDirectory to find library path, if you "
+"aren't already"
+msgstr ""
+
+#: flawfinder:1146
+msgid ""
+"Never create NULL ACLs; an attacker can set it to Everyone (Deny All "
+"Access), which would even forbid administrator access (CWE-732)"
+msgstr ""
+
+#: flawfinder:1152
+msgid ""
+"This doesn't set the inheritance bits in the access control entry (ACE) "
+"header (CWE-732)"
+msgstr ""
+
+#: flawfinder:1153
+msgid "Make sure that you set inheritance by hand if you wish it to inherit"
+msgstr ""
+
+#: flawfinder:1158
+msgid ""
+"It's often easy to fool getlogin.  Sometimes it does not work at all, "
+"because some program messed up the utmp file.  Often, it gives only the "
+"first 8 characters of the login name. The user currently logged in on the "
+"controlling tty of our program need not be the user who started it.  Avoid "
+"getlogin() for security-related purposes (CWE-807)"
+msgstr ""
+
+#: flawfinder:1159 flawfinder:1165
+msgid "Use getpwuid(geteuid()) and extract the desired information instead"
+msgstr ""
+
+#: flawfinder:1164
+msgid ""
+"Exactly what cuserid() does is poorly defined (e.g., some systems use the "
+"effective uid, like Linux, while others like System V use the real uid). "
+"Thus, you can't trust what it does. It's certainly not portable (The cuserid "
+"function was included in the 1988 version of POSIX, but removed from the "
+"1990 version).  Also, if passed a non-null parameter, there's a risk of a "
+"buffer overflow if the passed-in buffer is not at least L_cuserid characters "
+"long (CWE-120)"
+msgstr ""
+
+#: flawfinder:1170
+msgid ""
+"This function is dangerous; it may overflow the provided buffer. It extracts "
+"data from a 'protected' area, but most systems have many commands to let "
+"users modify the protected area, and it's not always clear what their limits "
+"are.  Best to avoid using this function altogether (CWE-676, CWE-120)"
+msgstr ""
+
+#: flawfinder:1171
+msgid "Use getpwuid() instead"
+msgstr ""
+
+#: flawfinder:1176
+msgid ""
+"This function is obsolete and not portable. It was in SUSv2 but removed by "
+"POSIX.2.  What it does exactly varies considerably between systems, "
+"particularly in where its prompt is displayed and where it gets its data (e."
+"g., /dev/tty, stdin, stderr, etc.) (CWE-676)"
+msgstr ""
+
+#: flawfinder:1177
+msgid ""
+"Make the specific calls to do exactly what you want.  If you continue to use "
+"it, or write your own, be sure to zero the password as soon as possible to "
+"avoid leaving the cleartext password visible in the process' address space"
+msgstr ""
+
+#: flawfinder:1182
+msgid ""
+"These functions are considered obsolete on most systems, and very non-"
+"poertable (Linux-based systems handle them radically different, basically if "
+"gsignal/ssignal were the same as raise/signal respectively, while System V "
+"considers them a separate set and obsolete) (CWE-676)"
+msgstr ""
+
+#: flawfinder:1183
+msgid "Switch to raise/signal, or some other signalling approach"
+msgstr ""
+
+#: flawfinder:1188
+msgid ""
+"On some systems (though not Linux-based systems) an attempt to free() "
+"results from memalign() may fail. This may, on a few systems, be "
+"exploitable.  Also note that memalign() may not check that the boundary "
+"parameter is correct (CWE-676)"
+msgstr ""
+
+#: flawfinder:1189
+msgid ""
+"Use posix_memalign instead (defined in POSIX's 1003.1d).  Don't switch to "
+"valloc(); it is marked as obsolete in BSD 4.3, as legacy in SUSv2, and is no "
+"longer defined in SUSv3.  In some cases, malloc()'s alignment may be "
+"sufficient"
+msgstr ""
+
+#: flawfinder:1194
+msgid ""
+"This C routine is considered obsolete (as opposed to the shell command by "
+"the same name, which is NOT obsolete) (CWE-676)"
+msgstr ""
+
+#: flawfinder:1195
+msgid "Use getrlimit(2), setrlimit(2), and sysconf(3) instead"
+msgstr ""
+
+#: flawfinder:1200
+msgid ""
+"This C routine is considered obsolete (as opposed to the shell command by "
+"the same name).   The interaction of this function with SIGALRM and other "
+"timer functions such as sleep(), alarm(), setitimer(), and nanosleep() is "
+"unspecified (CWE-676)"
+msgstr ""
+
+#: flawfinder:1201
+msgid "Use nanosleep(2) or setitimer(2) instead"
+msgstr ""
+
+#: flawfinder:1207
+msgid "Function accepts input from outside program (CWE-20)"
+msgstr ""
+
+#: flawfinder:1208
+msgid ""
+"Make sure input data is filtered, especially if an attacker could manipulate "
+"it"
+msgstr ""
+
+#: flawfinder:1324
+msgid "Skipping unpatched file "
+msgstr ""
+
+#: flawfinder:1326
+msgid "Skipping unpatched file"
+msgstr ""
+
+#: flawfinder:1335
+msgid "BUG! Somehow got a symlink in process_c_file!"
+msgstr ""
+
+#: flawfinder:1354 flawfinder:1356
+msgid "Examining"
+msgstr ""
+
+#: flawfinder:1460
+msgid "File ended while in comment."
+msgstr ""
+
+#: flawfinder:1461
+msgid "File ended while in string."
+msgstr ""
+
+#: flawfinder:1472
+#, python-brace-format
+msgid "Error: Rule {rule}, when expanded, overlaps {newrule}"
+msgstr ""
+
+#: flawfinder:1490
+msgid "Number of rules (primarily dangerous function names) in C/C++ ruleset:"
+msgstr ""
+
+#: flawfinder:1508
+msgid "<title>Flawfinder Results</title>"
+msgstr ""
+
+#: flawfinder:1513
+msgid "<h1>Flawfinder Results</h1>"
+msgstr ""
+
+#: flawfinder:1514
+msgid "Here are the security scan results from"
+msgstr ""
+
+#: flawfinder:1515
+#, python-brace-format
+msgid ""
+"<a href=\"http://www.dwheeler.com/flawfinder\">Flawfinder version {version}</"
+"a>,"
+msgstr ""
+
+#: flawfinder:1516
+msgid "(C) 2001-2014 <a href=\"http://www.dwheeler.com\">David A. Wheeler</a>."
+msgstr ""
+
+#: flawfinder:1518
+#, python-brace-format
+msgid "Flawfinder version {version}, (C) 2001-2014 David A. Wheeler."
+msgstr ""
+
+#: flawfinder:1541
+msgid "Skipping symbolic link directory "
+msgstr ""
+
+#: flawfinder:1546
+msgid "Skipping directory with initial dot "
+msgstr ""
+
+#: flawfinder:1561
+msgid "Skipping symbolic link file "
+msgstr ""
+
+#: flawfinder:1566 flawfinder:1608
+msgid "Skipping non-regular file "
+msgstr ""
+
+#: flawfinder:1588
+msgid "Skipping symbolic link "
+msgstr ""
+
+#: flawfinder:1604
+msgid "Skipping non-existent filename starting with UTF-8 long dash "
+msgstr ""
+
+#: flawfinder:1606
+msgid "Skipping non-existent file "
+msgstr ""
+
+#: flawfinder:1611
+msgid ""
+"\n"
+"flawfinder [--help | -h] [--version] [--listrules]\n"
+"  [--allowlink] [--followdotdir] [--nolink] \n"
+"           [--patch filename | -P filename]\n"
+"  [--inputs | -I] [--minlevel X | -m X]\n"
+"           [--falsepositive | -F] [--neverignore | -n]\n"
+"  [--context | -c] [--columns | -C] [--dataonly | -D]\n"
+"           [--html | -H] [--immediate | -i] [--singleline | -S]\n"
+"           [--omittime] [--quiet | -Q]\n"
+"  [--loadhitlist F] [--savehitlist F] [--diffhitlist F]\n"
+"  [--] [source code file or source root directory]+\n"
+"\n"
+"  The options cover various aspects of flawfinder as follows.\n"
+"\n"
+"  Documentation:\n"
+"  --help | -h Show this usage help.\n"
+"  --version   Show version number.\n"
+"  --listrules List the rules in the ruleset (rule database).\n"
+"\n"
+"  Selecting Input Data:\n"
+"  --allowlink Allow symbolic links.\n"
+"  --followdotdir\n"
+"              Follow directories whose names begin with \".\".\n"
+"              Normally they are ignored.\n"
+"  --nolink    Skip symbolic links (ignored).\n"
+"  --patch F | -P F\n"
+"              Display information related to the patch F\n"
+"              (patch must be already applied).\n"
+"\n"
+"  Selecting Hits to Display:\n"
+"  --inputs | -I\n"
+"              Show only functions that obtain data from outside the "
+"program;\n"
+"              this also sets minlevel to 0.\n"
+"  -m X | --minlevel=X\n"
+"              Set minimum risk level to X for inclusion in hitlist.  This\n"
+"              can be from 0 (``no risk'')  to  5  (``maximum  risk'');  the\n"
+"              default is 1.\n"
+"  --falsepositive | -F\n"
+"              Do not include hits that are likely to be false  positives.\n"
+"              Currently,  this  means  that function names are ignored if\n"
+"              they're not followed by \"(\", and that declarations of char-\n"
+"              acter  arrays  aren't noted.  Thus, if you have use a vari-\n"
+"              able named \"access\" everywhere, this will eliminate  refer-\n"
+"              ences  to  this ordinary variable.  This isn't the default,\n"
+"              because this  also  increases  the  likelihood  of  missing\n"
+"              important  hits;  in  particular, function names in #define\n"
+"              clauses and calls through function pointers will be missed.\n"
+"  --neverignore | -n\n"
+"              Never ignore security issues, even if they have an ``ignore''\n"
+"              directive in a comment.\n"
+"  --regex PATTERN | -e PATTERN\n"
+"              Only report hits that match the regular expression PATTERN.\n"
+"\n"
+"  Selecting Output Format:\n"
+"  --columns | -C\n"
+"              Show  the  column  number  (as well as the file name and\n"
+"              line number) of each hit; this is shown after the line number\n"
+"              by adding a colon and the column number in the line (the "
+"first\n"
+"              character in a line is column number 1).\n"
+"  --context | -c\n"
+"              Show context (the line having the \"hit\"/potential flaw)\n"
+"  --dataonly | -D\n"
+"              Don't display the headers and footers of the analysis;\n"
+"              use this along with --quiet to get just the results.\n"
+"  --html | -H\n"
+"              Display as HTML output.\n"
+"  --immediate | -i\n"
+"              Immediately display hits (don't just wait until the end).\n"
+"  --singleline | -S\n"
+"              Single-line output.\n"
+"  --omittime  Omit time to run.\n"
+"  --quiet | -Q\n"
+"              Don't display status information (i.e., which files are being\n"
+"              examined) while the analysis is going on.\n"
+"\n"
+"  Hitlist Management:\n"
+"  --savehitlist=F\n"
+"              Save all hits (the \"hitlist\") to F.\n"
+"  --loadhitlist=F\n"
+"              Load hits from F instead of analyzing source programs.\n"
+"  --diffhitlist=F\n"
+"              Show only hits (loaded or analyzed) not in F.\n"
+"\n"
+"\n"
+"  For more information, please consult the manpage or available\n"
+"  documentation.\n"
+msgstr ""
+
+#: flawfinder:1772
+msgid "Loading hits from"
+msgstr ""
+
+#: flawfinder:1776 flawfinder:1963
+msgid "Saving hitlist to"
+msgstr ""
+
+#: flawfinder:1780
+msgid "Showing hits not in"
+msgstr ""
+
+#: flawfinder:1802
+msgid "*** getopt error:"
+msgstr ""
+
+#: flawfinder:1819
+msgid "*** No input files"
+msgstr ""
+
+#: flawfinder:1838
+msgid "<h2>Final Results</h2>"
+msgstr ""
+
+#: flawfinder:1840
+msgid "FINAL RESULTS:"
+msgstr ""
+
+#: flawfinder:1868
+msgid "<h2>Analysis Summary</h2>"
+msgstr ""
+
+#: flawfinder:1871
+msgid "ANALYSIS SUMMARY:"
+msgstr ""
+
+#: flawfinder:1877
+msgid "Hits ="
+msgstr ""
+
+#: flawfinder:1879
+msgid "No hits found."
+msgstr ""
+
+#: flawfinder:1887
+msgid "Hits limited to regular expression "
+msgstr ""
+
+#: flawfinder:1888
+#, python-brace-format
+msgid "Lines analyzed = {sumlines}"
+msgstr ""
+
+#: flawfinder:1890
+#, python-brace-format
+msgid ""
+"in approximately {time_analyzing:.2f} seconds ({lines_second:.0f} lines/"
+"second)"
+msgstr ""
+
+#: flawfinder:1895
+#, python-brace-format
+msgid "Physical Source Lines of Code (SLOC) = {sloc}"
+msgstr ""
+
+#: flawfinder:1898
+msgid "Hits@level ="
+msgstr ""
+
+#: flawfinder:1906
+msgid "Hits@level+ ="
+msgstr ""
+
+#: flawfinder:1918
+msgid "Hits/KSLOC@level+ ="
+msgstr ""
+
+#: flawfinder:1927
+#, python-brace-format
+msgid ""
+"Symlinks skipped ={num_links_skipped} (--allowlink overrides but see doc for "
+"security issue)"
+msgstr ""
+
+#: flawfinder:1932
+#, python-brace-format
+msgid ""
+"Dot directories skipped ={num_dotdirs_skipped} (--followdotdir overrides)"
+msgstr ""
+
+#: flawfinder:1937
+#, python-brace-format
+msgid "Suppressed hits ={num_ignored_hits} (use --neverignore to show them)"
+msgstr ""
+
+#: flawfinder:1941
+#, python-brace-format
+msgid "Minimum risk level = {minimum_level}"
+msgstr ""
+
+#: flawfinder:1944
+msgid "Not every hit is necessarily a security vulnerability."
+msgstr ""
+
+#: flawfinder:1947
+msgid "There may be other security vulnerabilities; review your code!"
+msgstr ""
+
+#: flawfinder:1950
+msgid ""
+"See '<a href=\"http://www.dwheeler.com/secure-programs\">Secure Programming "
+"for Linux and Unix HOWTO</a>'"
+msgstr ""
+
+#: flawfinder:1951
+msgid ""
+"(<a href=\"http://www.dwheeler.com/secure-programs\">http://www.dwheeler.com/"
+"secure-programs</a>) for more information."
+msgstr ""
+
+#: flawfinder:1953
+msgid "See 'Secure Programming for Linux and Unix HOWTO'"
+msgstr ""
+
+#: flawfinder:1954
+msgid "(http://www.dwheeler.com/secure-programs) for more information."
+msgstr ""
+
+#: flawfinder:1980
+msgid "*** Flawfinder interrupted"
+msgstr ""
