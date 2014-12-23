@@ -203,7 +203,7 @@ show-cwes: cwe
 
 #parse english localization
 generate-locale: 
-	xgettext --from-code=UTF-8 -o i18n/en_US/LC_MESSAGES/flawfinder.po -L Python flawfinder
+	xgettext --from-code=UTF-8 -o tmp_messages.po -L Python flawfinder
 
 # When I switch to using "DistUtils", I may need to move the MANIFEST.in
 # file into a subdirectory (named flawfinder-versionnumber).
