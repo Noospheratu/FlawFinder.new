@@ -311,7 +311,10 @@ def process_options():
     # will expand twice.  Python doesn't have a clean way to detect
     # "has globbing occurred", so this is the best I've found:
     if os.name == "windows" or os.name == "nt" or os.name == "dos":
-       sys.argv[1:] = reduce(operator.add, map(glob.glob, args))
+        try:
+	        sys.argv[1:] = reduce(operator.add, map(glob.glob, args))
+        except TypeError:
+            pass
     else:
        sys.argv[1:] = args
   # In Python 2 the convention is "getopt.GetoptError", but we
