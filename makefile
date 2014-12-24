@@ -1,6 +1,6 @@
 # Flawfinder.  Released under the General Public License (GPL).
 # (C) 2001-2014 David A. Wheeler.
-
+# (C) 2014 Roman M. Iudichev, Alexey Ganuta
 # To change version number, edit this here, the beginning of the
 # "flawfinder" script, flawfinder.spec, setup.py, and index.html.
 # Then "make test-is-correct" to get the updated version number.
@@ -9,7 +9,7 @@
 # Eventually switch to using DistUtils to autogenerate.
 
 NAME=flawfinder
-VERSION=1.31
+VERSION=1.32
 RPM_VERSION=1
 VERSIONEDNAME=$(NAME)-$(VERSION)
 ARCH=noarch
