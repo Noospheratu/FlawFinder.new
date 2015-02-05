@@ -122,7 +122,7 @@ def lang_init(_locale = None):
     return lang.gettext
 
 global _
-_ = None
+_ = lang_init('en_US')
 
 
 def usage():
