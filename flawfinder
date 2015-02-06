@@ -845,7 +845,7 @@ def c_printf(hit):
             _("standard definitions of it")          
           )
         hit.suggestion = _("Check it during installation, or use something else")
-        hit.category = _("port")
+        hit.category = "port"
       else:
         # We'll pass it on, just in case it's needed, but at level 0 risk.
         hit.level = 0
@@ -864,7 +864,7 @@ def c_sprintf(hit):
     hit.warning = _("format string parameter problem")
     hit.suggestion = _("Check if required parameters present and quotes close.")
     hit.level = 4
-    hit.category = _("format")
+    hit.category = "format"
     hit.url = ""
   elif source_position <= len(hit.parameters)-1:
     source=hit.parameters[source_position]
@@ -883,7 +883,7 @@ def c_sprintf(hit):
         hit.warning = _("Potential format string problem (CWE-134)")
         hit.suggestion = _("Make format string constant")
         hit.level = 4
-        hit.category = _("format")
+        hit.category = "format"
         hit.url = ""
   add_warning(hit)
 
