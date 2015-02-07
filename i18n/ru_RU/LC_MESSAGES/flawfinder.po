@@ -9,8 +9,9 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-23 23:21+0400\n"
 "PO-Revision-Date: 2014-12-23 23:26+0400\n"
-"Last-Translator: Ganuta Alexey <ziemenz@me.com>\n"
-"Language-Team: Ganuta Alexey <ziemenz@me.com>\n"
+"Last-Translator: Iudichev Roman <noospheratu@protonmail.ch>\n"
+"Language-Team: Iudichev Roman <noospheratu@protonmail.ch>\n"
+"               Ganuta Alexey  <ziemenz@me.com>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -208,15 +209,15 @@ msgstr ""
 
 #: flawfinder:291
 msgid "Loading hits from"
-msgstr "Загрузка результатов из"
+msgstr "Загрузка срабатываний из"
 
 #: flawfinder:295 flawfinder:1972
 msgid "Saving hitlist to"
-msgstr "Сохранение списка результатов в"
+msgstr "Сохранение списка срабатываний в"
 
 #: flawfinder:299
 msgid "Showing hits not in"
-msgstr "Показ результатов не входящих в"
+msgstr "Показ срабатываний, не входящих в"
 
 #: flawfinder:321
 msgid "*** getopt error:"
@@ -229,7 +230,7 @@ msgstr "Ошибка: {message}"
 
 #: flawfinder:356
 msgid "Warning: "
-msgstr "﻿Внимание:"
+msgstr "Предупреждение:"
 
 #: flawfinder:463 flawfinder:1548
 msgid "Error: failed to open"
@@ -249,7 +250,7 @@ msgid ""
 "wrong type of patch file: we have a line number without having seen a "
 "filename"
 msgstr ""
-"﻿неправильный тип файла исправления: есть номер строки, но отсутствует имя "
+"﻿неправильный тип файла патча: есть номер строки, но отсутствует имя "
 "файла"
 
 #: flawfinder:732
@@ -259,25 +260,25 @@ msgid ""
 "{text}"
 msgstr ""
 "﻿анализ, не удалось найти конец списка параметров; точка с запятой "
-"прекращается его в {text}"
+"завершает его в {text}"
 
 #: flawfinder:736
 #, python-brace-format
 msgid "Parsing failed to find end of parameter list in {text}"
-msgstr "анализ, не удалось найти конец списка параметров в {text}"
+msgstr "Парсинг не удался, не удалось найти конец списка параметров в {text}"
 
 #: flawfinder:785 flawfinder:869
 msgid "Risk is low because the source is a constant character."
-msgstr "Уровень риска низкий, поскольку источник символьная константа."
+msgstr "Уровень риска низкий, поскольку источник это символьная константа."
 
 #: flawfinder:788
 msgid "Risk is low because the source is a constant string."
-msgstr "Уровень риска низкий, поскольку источник постоянной строкой."
+msgstr "Уровень риска низкий, поскольку источник это строковая константа."
 
 #: flawfinder:823
 msgid "Risk is high; the length parameter appears to be a constant, "
 msgstr ""
-"Высокий уровень риска; появляется параметр длины, чтобы быть постоянным,"
+"Высокий уровень риска; появляется параметр длины, чтобы быть константой,"
 
 #: flawfinder:824
 msgid "instead of computing the number of characters left."
@@ -285,11 +286,11 @@ msgstr "﻿вместо вычисления количества оставши
 
 #: flawfinder:839
 msgid "On some very old systems, snprintf is incorrectly implemented "
-msgstr "﻿На некоторых очень старых систем, snprintf неправильно реализована"
+msgstr "﻿На некоторых очень старых систем, snprintf неправильно реализована "
 
 #: flawfinder:840
 msgid "and permits buffer overflows; there are also incompatible "
-msgstr "и позволяет переполнение буфера; Есть также несовместимые"
+msgstr "и допускает переполнение буфера; Есть также несовместимые"
 
 #: flawfinder:841
 msgid "standard definitions of it"
@@ -355,15 +356,15 @@ msgstr ""
 
 #: flawfinder:928
 msgid "Risk is high, it appears that the size is given as bytes, but the "
-msgstr "Высокий уровень риска, кажется, что размер задан в виде байтов, но"
+msgstr "Высокий уровень риска, это означает, что размер задан в виде байтов, но"
 
 #: flawfinder:929
 msgid "function requires size as characters."
-msgstr "функция требует размер в символах"
+msgstr "функция требует размер в символах."
 
 #: flawfinder:936
 msgid "Risk is very low, the length appears to be in characters not bytes."
-msgstr "Уровень риска низкий, длина по-видимому в символах, а не в байтах."
+msgstr "Уровень риска низкий, длина означает размер в символах, а не в байтах."
 
 #: flawfinder:974
 #, fuzzy
@@ -487,7 +488,7 @@ msgstr ""
 #: flawfinder:1051
 msgid ""
 "Statically-sized arrays can be improperly restricted, leading to potential "
-"overflows or other issues (CWE-119:CWE-120)"
+"overflows or other issues (CWE-119, CWE-120)"
 msgstr ""
 "Статически определённые массивы могут быть неправильно ограничены, что ведёт "
 "к потенциальному переполнению или другим проблемам (CWE-119, CWE-120)."
@@ -504,7 +505,7 @@ msgstr "Нет проверки на переполнение буфера (CWE-
 
 #: flawfinder:1058
 msgid "Use fgets() instead"
-msgstr ""
+msgstr "Взамен используйте fgets()"
 
 #: flawfinder:1064
 msgid "Does not check for buffer overflows (CWE-120)"
@@ -512,7 +513,7 @@ msgstr "Нет проверки на переполнение буфера (CWE-
 
 #: flawfinder:1065
 msgid "Use sprintf_s, snprintf, or vsnprintf"
-msgstr ""
+msgstr "Используйте sprintf_s, snprintf или vsnprintf"
 
 #: flawfinder:1070 flawfinder:1076
 msgid ""
@@ -1140,7 +1141,7 @@ msgstr "﻿BUG! Каким-то образом получил символиче
 
 #: flawfinder:1561 flawfinder:1563
 msgid "Examining"
-msgstr "﻿Изучение"
+msgstr "Исследование"
 
 #: flawfinder:1667
 msgid "File ended while in comment."
@@ -1171,7 +1172,7 @@ msgstr "<h1>Результаты Flawfinder</h1>"
 
 #: flawfinder:1721
 msgid "Here are the security scan results from"
-msgstr "Результаты сканирования безопасности с помощью "
+msgstr "Результаты сканирования безопасности с помощью"
 
 #: flawfinder:1722
 #, python-brace-format
@@ -1193,31 +1194,31 @@ msgstr "Flawfinder версия {version}, (C) 2001-2014 David A. Wheeler."
 
 #: flawfinder:1748
 msgid "Skipping symbolic link directory "
-msgstr "Пропуск символьной ссылки на папку"
+msgstr "Пропуск символьной ссылки на папку "
 
 #: flawfinder:1753
 msgid "Skipping directory with initial dot "
-msgstr "Пропуск папки с начальной точкой"
+msgstr "Пропуск папки с начальной точкой "
 
 #: flawfinder:1768
 msgid "Skipping symbolic link file "
-msgstr "Пропуск символьной ссылки на файл"
+msgstr "Пропуск символьной ссылки на файл "
 
 #: flawfinder:1773 flawfinder:1815
 msgid "Skipping non-regular file "
-msgstr "Пропуск необычного файла"
+msgstr "Пропуск необычного файла "
 
 #: flawfinder:1795
 msgid "Skipping symbolic link "
-msgstr "Пропуск символьной ссылки"
+msgstr "Пропуск символьной ссылки "
 
 #: flawfinder:1811
 msgid "Skipping non-existent filename starting with UTF-8 long dash "
-msgstr "Пропуск не существующего файла, начинающегося с длинного тире в UTF-8"
+msgstr "Пропуск не существующего файла, начинающегося с длинного тире в UTF-8 "
 
 #: flawfinder:1813
 msgid "Skipping non-existent file "
-msgstr "Пропуск не существующего файла"
+msgstr "Пропуск несуществующего файла"
 
 #: flawfinder:1828
 msgid "*** No input files"
@@ -1241,15 +1242,15 @@ msgstr "ИТОГИ АНАЛИЗА:"
 
 #: flawfinder:1886
 msgid "Hits ="
-msgstr "Просмотров = "
+msgstr "Срабатываний = "
 
 #: flawfinder:1888
 msgid "No hits found."
-msgstr "Не найдено просмотров"
+msgstr "Не найдено срабатываний."
 
 #: flawfinder:1896
 msgid "Hits limited to regular expression "
-msgstr "Просмотры ограничены регулярным выражением"
+msgstr "Срабатывания ограничены регулярным выражением "
 
 #: flawfinder:1897
 #, python-brace-format
@@ -1310,7 +1311,7 @@ msgstr "﻿Не каждый хит это обязательно уязвимо
 
 #: flawfinder:1956
 msgid "There may be other security vulnerabilities; review your code!"
-msgstr "﻿Там могут быть и другие уязвимости; Проверьте код!"
+msgstr "﻿Там могут быть и другие уязвимости; проверьте код!"
 
 #: flawfinder:1959
 msgid ""
