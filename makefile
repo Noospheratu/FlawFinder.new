@@ -72,9 +72,17 @@ install:
 	-$(MKDIR_P) $(DESTDIR)$(INSTALL_DIR_MAN)
 	$(INSTALL_DATA) flawfinder.1 $(DESTDIR)$(INSTALL_DIR_MAN)/flawfinder.1
 
+	-$(MKDIR_P) $(DESTDIR)$(PREFIX)/share/locale/en_US/LC_MESSAGES/
+	-$(MKDIR_P) $(DESTDIR)$(PREFIX)/share/locale/en_US/LC_MESSAGES/
+	$(INSTALL_PROGRAM) i18n/en_US/LC_MESSAGES/flawfinder.mo $(DESTDIR)$(PREFIX)/share/locale/en_US/LC_MESSAGES/flawfinder.mo
+	$(INSTALL_PROGRAM) i18n/ru_RU/LC_MESSAGES/flawfinder.mo $(DESTDIR)$(PREFIX)/share/locale/ru_RU/LC_MESSAGES/flawfinder.mo
+    
+    
 uninstall:
 	rm -f $(DESTDIR)$(INSTALL_DIR_BIN)/flawfinder$(PYTHONEXT)
 	rm -f $(DESTDIR)$(INSTALL_DIR_MAN)/flawfinder.1
+	rm -f $(DESTDIR)$(PREFIX)/share/locale/en_US/LC_MESSAGES/flawfinder.mo
+	rm -f $(DESTDIR)$(PREFIX)/share/locale/ru_RU/LC_MESSAGES/flawfinder.mo
 
 flawfinder.1.gz: flawfinder.1
 	gzip -c9 < flawfinder.1 > flawfinder.1.gz
